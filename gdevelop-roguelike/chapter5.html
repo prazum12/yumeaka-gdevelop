@@ -104,7 +104,9 @@
         <tr><td>Goblin の Health の Value</td><td><code>1</code></td><td><code>1 + floor(Elapsed / 90)</code></td></tr>
       </table>
       <p>次に、ゴブリンを出すイベントを右クリック →「Add」→「Repeat」で、繰り返す回数を <code>1 + floor(Elapsed / 90)</code> にします。<br>
-        繰り返しは、ゴブリンを出すイベントの<strong>中</strong>（一段右）に入れます。<br>
+        繰り返しは、右クリックしたイベントの<strong>下</strong>（同じ段）にできます。<br>
+        そのままだと毎回ゴブリンが出て、画面があふれてしまいます。<br>
+        必ずドラッグして、ゴブリンを出すイベントの<strong>中</strong>（一段右）に入れよう。<br>
         そして、「Change the variable SpawnAngle」「Create object Goblin」「Change the scale of Goblin」「Change the variable Health of Goblin」の4つのアクションを、ドラッグして繰り返しの中に動かします。<br>
         タイマーのリセットだけは、外に残します。</p>
       <figure class="figure">
@@ -177,6 +179,14 @@
       こういう変数を「フラグ（旗）」と呼びます。
     </div>
 
+    <div class="trouble">
+      <h4>⚠️ Clear のシーンを先に作っておこう</h4>
+      <p>「Change the scene」の一覧に、まだ Clear はありません。<br>
+      左上の「≡」でプロジェクトマネージャーを開き、「Scenes」の「＋」を押して、名前が <code>Clear</code> のシーンを作っておこう。<br>
+      中身は第6章で作るので、今はからっぽのままでOK。<br>
+      今の時点でボスをたおすと、何もない画面に切りかわれば正しく動いています。</p>
+    </div>
+
     <div class="step">
       <span class="step-num">6</span><span class="step-title">ボスの動きと当たり判定</span>
       <p>Boss グループに、ゴブリンと同じようなイベントを作ります。<br>
@@ -196,14 +206,6 @@
           写真は完成したときのものです。<br>
           いちばん下のイベントの LastTime・LastLevel の2行は第6章で足すので、今は「Change to scene "Clear"」だけでOK</figcaption>
       </figure>
-    </div>
-
-    <div class="trouble">
-      <h4>⚠️ Clear のシーンを先に作っておこう</h4>
-      <p>「Change the scene」の一覧に、まだ Clear はありません。<br>
-      左上の「≡」でプロジェクトマネージャーを開き、「Scenes」の「＋」を押して、名前が <code>Clear</code> のシーンを作っておこう。<br>
-      中身は第6章で作るので、今はからっぽのままでOK。<br>
-      今の時点でボスをたおすと、何もない画面に切りかわれば正しく動いています。</p>
     </div>
 
     <div class="step">
@@ -273,8 +275,10 @@
 
     <div class="trouble">
       <h4>ゴブリンが急にたくさん出すぎる・まったく出なくなった</h4>
-      <p><strong>原因:</strong> タイマーのリセットまで繰り返しの中に入れてしまった、または式の写しまちがい。</p>
-      <p><strong>直し方:</strong> 「Start (or reset) the timer "EnemyTimer"」は繰り返しの外にあるか確かめて、式はコピーボタンで写しなおそう。</p>
+      <p><strong>原因:</strong> 繰り返しのイベントが、ゴブリンを出すイベントの中に入っていない。<br>
+      または、タイマーのリセットまで繰り返しの中に入れてしまったか、式の写しまちがい。</p>
+      <p><strong>直し方:</strong> 繰り返しのイベントを、ドラッグしてゴブリンを出すイベントの中（一段右）に入れよう。<br>
+      「Start (or reset) the timer "EnemyTimer"」は繰り返しの外にあるか確かめて、式はコピーボタンで写しなおそう。</p>
     </div>
 
     <h2>5-6. ✅ チェックリスト</h2>

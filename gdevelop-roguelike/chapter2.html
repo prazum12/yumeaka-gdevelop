@@ -186,8 +186,9 @@
           この写真は3Dアクション編のプロジェクトで撮ったものです</figcaption>
       </figure>
       <div class="code-block"><span class="code-label">繰り返す回数</span><button class="copy-btn" type="button">コピー</button><pre><code>KnifeDirs * KnifeCount</code></pre></div>
-      <p>写真のように、繰り返しのイベントがタイマーのイベントの<strong>中</strong>（一段右にずれた場所）に入っているか確かめよう。<br>
-        ずれていないときは、ドラッグしてタイマーのイベントの中に入れます。<br>
+      <p>繰り返しのイベントは、右クリックしたイベントの<strong>下</strong>（同じ段）にできます。<br>
+        そのままだと、タイマーに関係なく毎回動いてしまいます。<br>
+        必ずドラッグして、写真のようにタイマーのイベントの<strong>中</strong>（一段右にずれた場所）に入れよう。<br>
         イベントシートには「Repeat KnifeDirs * KnifeCount times:」と表示されます。</p>
       <figure class="figure">
         <a href="img/ch2-05_repeat.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-05_repeat.jpg" alt="Knifeグループ。タイマーのイベントの中に、Repeat KnifeDirs * KnifeCount times:（赤枠）" loading="lazy"></a>
@@ -311,8 +312,10 @@
 
     <div class="trouble">
       <h4>ナイフがものすごくたくさん出る</h4>
-      <p><strong>原因:</strong> 「Start (or reset) a scene timer」を入れ忘れた、または繰り返しの中に入れてしまった。</p>
-      <p><strong>直し方:</strong> タイマーのリセットは、繰り返しの外（タイマーのイベントのアクション）に入れよう。</p>
+      <p><strong>原因:</strong> 繰り返しのイベントがタイマーのイベントの中に入っていない。<br>
+      または、「Start (or reset) a scene timer」を入れ忘れたか、繰り返しの中に入れてしまった。</p>
+      <p><strong>直し方:</strong> 繰り返しのイベントを、ドラッグしてタイマーのイベントの中（一段右）に入れよう。<br>
+      タイマーのリセットは、繰り返しの外（タイマーのイベントのアクション）に入れよう。</p>
     </div>
 
     <div class="trouble">
