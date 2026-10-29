@@ -34,13 +34,17 @@
         <li>「ビヘイビアを有効化/無効化する」アクションで、ビヘイビアを止めたり動かしたりできる</li>
         <li>変数を使って「乗っている／乗っていない」を覚えさせられる</li>
         <li>「もしそれ以外の場合」（そうでなければ、もし〜なら）を使える</li>
+        <li>動いているかどうかで、主人公のアニメーション（走る・立つ）を切りかえられる</li>
+        <li>UI レイヤーを作って、画面に案内の文字を出したり消したりできる</li>
       </ul>
     </div>
 
     <h2>2-1. この章で作るしくみ</h2>
     <p>
       トラックの近くで <code>E</code> キーを押すと乗りこみ、もう一度 <code>E</code> を押すと降りるようにします。<br>
-      乗っている間は、主人公を見えなくして、同じ <code>W</code>・<code>A</code>・<code>S</code>・<code>D</code> でトラックを運転できるようにします。
+      乗っている間は、主人公を見えなくして、同じ <code>W</code>・<code>A</code>・<code>S</code>・<code>D</code> でトラックを運転できるようにします。<br>
+      そのあと、主人公が歩くと走る動きになるようにします。<br>
+      最後に、トラックの近くで「E：トラックに乗る」と、画面に案内が出るようにします。
     </p>
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
@@ -59,6 +63,26 @@
       <div class="ev-row">
         <div class="ev-cond"><span class="ev-head">条件</span>乗っている</div>
         <div class="ev-act"><span class="ev-head">アクション</span>主人公をトラックの位置に動かす（カメラがついてくる）</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>主人公が動いている</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>走るアニメーション（Run）にする</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件（それ以外の場合）</span>（上以外のとき＝止まっているとき）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>立っているアニメーション（Idle）にする</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>乗っていない<br>トラックが近い</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>案内を出して「E：トラックに乗る」にする</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>乗っていない<br>トラックが近くない</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>案内を消す</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>乗っている</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>案内を出して「E：トラックから降りる」にする</div>
       </div>
     </div>
 
@@ -233,8 +257,17 @@
 
     <div class="step">
       <span class="step-num">10</span><span class="step-title">降りるイベントを「それ以外の場合」で作る</span>
-      <p>乗りこむイベントの何もないところを右クリックして、「<strong>追加</strong>」の中から「<strong>それ以外の場合</strong>」（イベント）を選びます。<br>
-        「それ以外の場合」は、「上のイベントが動かなかったときだけ、こっちを調べる」という特別なイベントです。<br>
+      <p>乗りこむイベントの何もないところを右クリックして、「<strong>追加</strong>」にマウスをのせます。<br>
+        右に開いたメニューから「<strong>Else</strong>」を選びます。<br>
+        このメニューは、日本語の画面でも英語のまま「Else」と表示されます。<br>
+        イベントシートには「<strong>それ以外の場合</strong>」と表示されます。</p>
+      <figure class="figure">
+        <a href="img/ch2-05a_add-menu.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-05a_add-menu.jpg" alt="イベントを右クリックしたメニューの「追加」（赤枠）と、右に開いたメニュー。Else、For each object、Repeat に赤枠" loading="lazy"></a>
+        <figcaption>右クリック →「追加」（左の赤枠）→「Else」（右のいちばん上の赤枠）。<br>
+          ここで使うのは「Else」だけ。<br>
+          ほかの赤枠（For each object・Repeat）は、ここでは使わない</figcaption>
+      </figure>
+      <p>「それ以外の場合」は、「上のイベントが動かなかったときだけ、こっちを調べる」という特別なイベントです。<br>
         条件を入れると、表示が「<strong>もしそれ以外の場合</strong>」に変わります。<br>
         条件は2つ。</p>
       <ul>
@@ -294,6 +327,156 @@
       </figure>
     </div>
 
+    <h2>2-7. 主人公に走る動きをつけよう</h2>
+    <p>
+      第1章で入れかえた主人公（Survivor Male B）には、「Run」（走る）や「Idle」（立っている）のアニメーションが入っています。<br>
+      動いているときは Run、止まっているときは Idle になるように、イベントで切りかえます。
+    </p>
+
+    <div class="step">
+      <span class="step-num">13</span><span class="step-title">動いているときは走るアニメーションにする</span>
+      <p>イベントシートのいちばん下の「<strong>+ 追加...</strong>」→「<strong>イベントグループ</strong>」で、新しいグループ <code>Player animation</code> を作ります。<br>
+        グループをクリックしてから <code>Shift + D</code> を押すと、グループの中にイベントができます。<br>
+        「条件を追加」を押し、左の一覧から <code>Player</code> を選びます。<br>
+        まん中の一覧から「<strong>移動している</strong>」を選びます（上の検索の欄に <code>移動</code> と入れると見つけやすい）。<br>
+        右の「ビヘイビア」は <code>PhysicsCharacter3D</code> のままでOK。</p>
+      <figure class="figure">
+        <a href="img/ch2-20_is-moving.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-20_is-moving.jpg" alt="条件の画面。Playerの条件の「移動している」（赤枠）。右のビヘイビアはPhysicsCharacter3D（赤枠）" loading="lazy"></a>
+        <figcaption>Player の「移動している」（まん中の赤枠）。<br>
+          ビヘイビアは PhysicsCharacter3D（右の赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、左の一覧や上のタブに、あとの章で作るものも見えている</figcaption>
+      </figure>
+      <p>アクションは <code>アニメーション名</code> で検索 →「<strong>アニメーション名</strong>」。<br>
+        オブジェクトは <code>Player</code>、アニメーションの名前は一覧から「<strong>Run</strong>」を選びます。<br>
+        イベントシートには「Player は移動している」「Player のアニメーションを変更する："Run" を代入」と出ます。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">14</span><span class="step-title">止まっているときは立つアニメーションにする</span>
+      <p>今作ったイベントを右クリックして、「<strong>追加</strong>」→「<strong>Else</strong>」を選びます（手順10と同じ）。<br>
+        イベントシートには「<strong>それ以外の場合</strong>」と表示されます。<br>
+        条件は入れずに、アクションに「アニメーション名」で <code>Player</code> を「<strong>Idle</strong>」にします。<br>
+        動いていないとき（＝止まっているとき）に、立っている動きになります。</p>
+      <figure class="figure">
+        <a href="img/ch2-19_player-anim-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-19_player-anim-events.jpg" alt="Player animationグループのイベント（赤枠）。「Player は移動している」のとき「Player のアニメーションを変更する：&quot;Run&quot; を代入」、「それ以外の場合」は「&quot;Idle&quot; を代入」" loading="lazy"></a>
+        <figcaption>Player animation グループの完成形（赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、Gun・Zombie・Battle・Boss のグループ（第3章〜第5章で作る）も見えている</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">Run・Idle・Jump</span> … Survivor Male B に、はじめから入っているアニメーションの名前。<br>
+      素材についている名前なので、日本語の画面でも英語のまま表示されます。<br>
+      「アニメーション名」のアクションでは、この名前を一覧から選ぶだけで動きが変わります。
+    </div>
+
+    <h2>2-8. トラックの案内を出そう</h2>
+    <p>
+      トラックに乗れることに気づかない人もいるので、トラックの近くに行くと画面の下に「E：トラックに乗る」と出るようにします。<br>
+      乗っている間は「E：トラックから降りる」に変えます。
+    </p>
+
+    <div class="step">
+      <span class="step-num">15</span><span class="step-title">UI 用のレイヤーを作る</span>
+      <p>案内の文字は、カメラが動いても画面の下にずっと出しておきたいです。<br>
+        そこで、<strong>カメラが動いても画面に貼りついたままの層</strong>、レイヤーを作ります。<br>
+        「Game Scene」のタブで、画面右上のボタンの列にある、紙が重なったマークのボタンを押すと、右下に「<strong>レイヤー</strong>」のパネルが開きます。<br>
+        パネルの右上の「＋」を押して、名前を <code>UI</code> にします。<br>
+        そのあと、UI の行の右にある「<strong>○</strong>」を押して、●にします。<br>
+        ●がついたレイヤーに、これから置くものが入ります。</p>
+    </div>
+
+    <div class="term">
+      <span class="word">レイヤー</span> … 透明なシートを何枚も重ねたようなしくみ。<br>
+      街やトラックは下のシート（ベースレイヤー）、案内の文字は上のシート（UI）に描くイメージ。<br>
+      カメラが動かすのは下のシートだけなので、UI の文字は画面の同じ場所に出続けます。<br>
+      第4章の HP の文字も、この UI レイヤーに置きます。<br>
+      最初からある「MobileControls」は、スマホ用のボタンを置くためのレイヤーです。
+    </div>
+
+    <div class="step">
+      <span class="step-num">16</span><span class="step-title">案内の文字 TruckHintText を作る</span>
+      <p>「シーンオブジェクト」の右の「＋」から「<strong>オブジェクトの新規作成</strong>」を開き、<code>テキスト</code> で検索して「<strong>テキスト</strong>」を選びます。<br>
+        開いた画面で、オブジェクト名を <code>TruckHintText</code> にして「適用」を押します。<br>
+        右の一覧の TruckHintText をクリックして、左のプロパティを次のようにします。</p>
+      <ul>
+        <li>テキスト: <code>E：トラックに乗る</code>（「：」は全角）</li>
+        <li>太字: ON</li>
+        <li>フォントサイズ: <code>34</code></li>
+        <li>色: <code>120;255;160</code>（明るい緑）</li>
+      </ul>
+      <figure class="figure">
+        <a href="img/ch2-18_truck-hint-text.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-18_truck-hint-text.jpg" alt="TruckHintTextのプロパティ。テキスト「E：トラックに乗る」、太字ON、フォントサイズ34、色120;255;160（赤枠）。シーンの画面の下のまん中に置いた文字（赤枠）と、右の一覧のTruckHintText（赤枠）" loading="lazy"></a>
+        <figcaption>テキスト・太字・フォントサイズ・色（左の赤枠）と、置いた文字（まん中の赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、HP や上の文字、右の一覧の Boss など、あとの章で作るものも写っている</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">色の数字</span> … <code>120;255;160</code> は「赤;緑;青」の強さを、それぞれ 0〜255 で表したもの。<br>
+      緑がいちばん強いので、明るい緑色になります。<br>
+      右の四角を押すと、色を選ぶ画面からも決められます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">17</span><span class="step-title">案内の文字を UI レイヤーに置く</span>
+      <p>レイヤーパネルで、UI に●がついていることを確かめます。<br>
+        一覧の TruckHintText を、シーンの中の四角い線（ゲーム画面のはんい）の中にドラッグします。<br>
+        置いた文字をクリックして、左の X を <code>500</code>、Y を <code>560</code> にします（画面の下のまん中あたり）。<br>
+        レイヤーの欄が「UI」になっていればOK。<br>
+        最後に、レイヤーパネルの「ベースレイヤー」の「○」を押して、●をベースレイヤーにもどしておこう。</p>
+      <p>ドラッグでうまく置けないときは、TruckHintText の「⋮」→「<strong>シーンにインスタンスを追加</strong>」を使うと、画面のまん中に置かれます。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">18</span><span class="step-title">案内を出すイベントを作る</span>
+      <p>イベントシートで、新しいグループ <code>Truck hint</code> を作ります（「+ 追加...」→「イベントグループ」）。<br>
+        グループをクリックしてから <code>Shift + D</code> で、中にイベントを作ります。<br>
+        イベントを3つ作ります。</p>
+      <p><strong>1つ目（近くにいるとき）</strong><br>
+        条件は2つ。</p>
+      <ul>
+        <li>「変数の値」で <code>InCar</code> が「<strong>偽</strong>」</li>
+        <li>「2つのオブジェクト間の距離」で、オブジェクトは <code>Player</code>、オブジェクト2 は <code>Truck</code>、距離は <code>200</code></li>
+      </ul>
+      <p>アクションも2つ。</p>
+      <ul>
+        <li>「表示」で <code>TruckHintText</code></li>
+        <li>左の一覧から <code>TruckHintText</code> を選び、いちばん上の「<strong>テキスト</strong>」。<br>
+          演算子は「＝（代入）」のまま、「テキスト」の欄に下の文字を入れる</li>
+      </ul>
+      <div class="code-block"><span class="code-label">1つ目のテキスト</span><button class="copy-btn" type="button">コピー</button><pre><code>"E：トラックに乗る"</code></pre></div>
+      <p>イベントの中で文字を入れるときは、ダブルクォーテーション（"）でかこみます。</p>
+      <p><strong>2つ目（はなれているとき）</strong><br>
+        <code>Shift + A</code> で新しいイベントを作ります。<br>
+        条件は1つ目と同じ2つですが、距離の条件だけ「<strong>条件を反転</strong>」を ON にします（「200 より遠い」になる）。<br>
+        アクションは「<strong>非表示</strong>」で <code>TruckHintText</code>。</p>
+      <p><strong>3つ目（乗っているとき）</strong><br>
+        条件は「変数の値」で <code>InCar</code> が「<strong>真</strong>」。<br>
+        アクションは「表示」で <code>TruckHintText</code> と、TruckHintText の「テキスト」に下の文字。</p>
+      <div class="code-block"><span class="code-label">3つ目のテキスト</span><button class="copy-btn" type="button">コピー</button><pre><code>"E：トラックから降りる"</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch2-21_truck-hint-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-21_truck-hint-events.jpg" alt="Truck hintグループの3つのイベント（赤枠）。TruckHintText を表示する、TruckHintText のテキストを変更する：&quot;E：トラックに乗る&quot; を代入、TruckHintText を非表示にする、&quot;E：トラックから降りる&quot; を代入" loading="lazy"></a>
+        <figcaption>Truck hint グループの3つのイベント（赤枠）。<br>
+          2つ目は距離の条件を反転しているので、赤いマークがつく。<br>
+          写真の上のほうに見えるのは、第5章で作る Boss グループ</figcaption>
+      </figure>
+    </div>
+
+    <h2>2-9. ためしてみよう</h2>
+    <div class="step">
+      <span class="step-num">19</span><span class="step-title">保存してプレビュー</span>
+      <p>保存してから「プレビュー」を押します。<br>
+        <code>W</code>・<code>A</code>・<code>S</code>・<code>D</code> で歩くと、主人公が走る動きになり、止まると立っている動きになります。<br>
+        トラックに近づくと、画面の下に「E：トラックに乗る」と出ます。<br>
+        乗ると「E：トラックから降りる」に変わり、降りてはなれると消えれば成功！</p>
+      <figure class="figure">
+        <a href="img/ch2-22_preview-hint.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-22_preview-hint.jpg" alt="プレビューで、トラックの近くにいる主人公。画面の下に「E：トラックに乗る」（赤枠）" loading="lazy"></a>
+        <figcaption>トラックの近くで「E：トラックに乗る」（赤枠）が出た。<br>
+          写真は完成したゲームで撮ったので、ゾンビ・HP・Kills・上の文字・左下の操作説明は、あとの章で作るもの</figcaption>
+      </figure>
+    </div>
+
     <div class="challenge">
       <h3>💪 やってみよう</h3>
       <p>ビヘイビアの「PhysicsCar3D」には、スピードやパワーの数字があります。<br>
@@ -306,7 +489,7 @@
       </details>
     </div>
 
-    <h2>2-7. 🚨 つまずきポイント集</h2>
+    <h2>2-10. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
       <h4>E を押しても乗れない</h4>
@@ -330,16 +513,39 @@
     <div class="trouble">
       <h4>1回押しただけで、乗ってすぐ降りてしまう</h4>
       <p><strong>原因:</strong> 降りるイベントが「もしそれ以外の場合」になっていない。</p>
-      <p><strong>直し方:</strong> 降りるイベントを消して、手順10のとおり右クリック →「追加」→「それ以外の場合」で作りなおそう。</p>
+      <p><strong>直し方:</strong> 降りるイベントを消して、手順10のとおり右クリック →「追加」→「Else」で作りなおそう。</p>
     </div>
 
-    <h2>2-8. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>主人公が走る動きにならない（すべるように動く）</h4>
+      <p><strong>原因:</strong> Player animation のイベントがない、またはアニメーションの名前を選んでいない。</p>
+      <p><strong>直し方:</strong> 手順13・14のとおり、「アニメーション名」で「Run」と「Idle」を一覧から選びなおそう。<br>
+        第1章で主人公を Survivor Male B に入れかえているかも確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>案内の文字がカメラといっしょに動く・見えない</h4>
+      <p><strong>原因:</strong> TruckHintText を置いたとき、●が「ベースレイヤー」のままだった。</p>
+      <p><strong>直し方:</strong> 置いた TruckHintText をクリックして、左のレイヤーの欄を「UI」に変えよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>案内の文字が、トラックからはなれても消えない</h4>
+      <p><strong>原因:</strong> 2つ目のイベントの距離の条件で、「条件を反転」が OFF になっている。</p>
+      <p><strong>直し方:</strong> 条件をダブルクリックで開いて、「条件を反転」を ON にしよう。<br>
+        ON になると、条件の前に赤いマークがつきます。</p>
+    </div>
+
+    <h2>2-11. ✅ チェックリスト</h2>
     <div class="checklist">
       <label><input type="checkbox"> トラックに「3D物理カー」と「3Dカーのキーボードマッパー」をつけた</label>
       <label><input type="checkbox"> 真偽値の変数 <code>InCar</code> を作った</label>
       <label><input type="checkbox"> 「ビヘイビアを有効化/無効化する」でビヘイビアを止めたり動かしたりできた</label>
       <label><input type="checkbox"> 「それ以外の場合」を使って、乗る・降りるを1つのキーで切りかえられた</label>
       <label><input type="checkbox"> プレビューで、トラックに乗って運転し、降りることができた</label>
+      <label><input type="checkbox"> 歩くと走る動き（Run）、止まると立っている動き（Idle）になる</label>
+      <label><input type="checkbox"> UI レイヤーを作って、TruckHintText を置いた</label>
+      <label><input type="checkbox"> トラックの近くで「E：トラックに乗る」、乗っている間は「E：トラックから降りる」と出る</label>
     </div>
     <p>全部チェックできたら第2章クリア！<br>
       🎉 次回は、主人公に銃を持たせて、撃てるようにするよ。</p>
