@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第5章 ゴールと画面の切り替え 〜タイトルからクリアまで〜 | 夢アカGDevelop教科書</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="academy">横須賀プログラミング"夢"アカデミー</div>
+    <a class="portal-link" href="../index.html">🏠 教材ポータルへ</a>
+    <h1><a href="index.html">GDevelopコース教科書</a></h1>
+  </header>
+
+  <main class="container">
+    <div class="chapter-title">
+      <span class="chapter-num">第5章</span>
+      <h1>ゴールと画面の切り替え 〜タイトルからクリアまで〜</h1>
+      <div class="date">📅 第5回の講習で使います（日付が決まったらここに記載）</div>
+    </div>
+
+    <div class="os-toggle">
+      <span class="os-label">💻 使っているPC:</span>
+      <button data-os="win" type="button">Windows</button>
+      <button data-os="mac" type="button">Mac</button>
+    </div>
+
+    <div class="goal-box">
+      <h2>🎯 この章でできるようになること</h2>
+      <ul>
+        <li>シーンを増やして、タイトル → ステージ → クリアの流れを作れる</li>
+        <li>ゴールにさわったらクリア画面へ切り替えられる</li>
+        <li>ゲームが最初に始まるシーンを設定できる</li>
+        <li>効果音とBGMをつけられる</li>
+      </ul>
+    </div>
+
+    <p>
+      ※ 前回のプロジェクトが開けない・壊れてしまった人は、講師を呼んでね。<br>
+      この章は、Stage1でPlayerが走れる状態なら始められます（敵やコインは後から追いつけばOK）。
+    </p>
+
+    <h2>5-1. ゲーム全体の流れを決めよう</h2>
+    <p>
+      今のゲームは、Stage1だけでできています。<br>
+      ふつうのゲームには、<strong>タイトル画面</strong>があって、遊んで、<strong>クリア画面</strong>が出ますよね。<br>
+      GDevelopでは、画面ごとに<strong>シーン</strong>を分けて作り、イベントでつなげます。
+    </p>
+
+    <div class="figure">
+      <svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Title、Stage1、Clearの3つのシーンのつながり">
+        <rect x="20" y="60" width="170" height="90" rx="12" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+        <text x="105" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#b45309">Title</text>
+        <text x="105" y="120" text-anchor="middle" font-size="12" fill="#78350f">タイトル画面</text>
+        <path d="M 195 105 L 260 105" stroke="#64748b" stroke-width="3" marker-end="url(#arrow5a)"/>
+        <text x="228" y="92" text-anchor="middle" font-size="12" fill="#334155">Space</text>
+        <rect x="265" y="60" width="170" height="90" rx="12" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+        <text x="350" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#0369a1">Stage1</text>
+        <text x="350" y="120" text-anchor="middle" font-size="12" fill="#0c4a6e">ゲーム本編</text>
+        <path d="M 440 105 L 505 105" stroke="#64748b" stroke-width="3" marker-end="url(#arrow5a)"/>
+        <text x="473" y="92" text-anchor="middle" font-size="12" fill="#334155">Goal</text>
+        <rect x="510" y="60" width="170" height="90" rx="12" fill="#ecfdf5" stroke="#16a34a" stroke-width="2"/>
+        <text x="595" y="95" text-anchor="middle" font-size="17" font-weight="bold" fill="#15803d">Clear</text>
+        <text x="595" y="120" text-anchor="middle" font-size="12" fill="#166534">クリア画面</text>
+        <path d="M 595 155 L 595 195 L 105 195 L 105 158" fill="none" stroke="#64748b" stroke-width="2" marker-end="url(#arrow5a)"/>
+        <text x="350" y="215" text-anchor="middle" font-size="12" fill="#334155">Enterキーでタイトルへもどる</text>
+        <path d="M 320 55 C 320 15, 380 15, 380 55" fill="none" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow5b)"/>
+        <text x="350" y="14" text-anchor="middle" font-size="12" fill="#dc2626">やられたらやり直し</text>
+        <defs>
+          <marker id="arrow5a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#64748b"/>
+          </marker>
+          <marker id="arrow5b" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#dc2626"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>図5-1: この章で作るゲームの流れ。<br>
+        矢印1本1本が「Change the scene」のイベントになる</figcaption>
+    </div>
+
+    <h2>5-2. クリア画面（Clear）を作ろう</h2>
+
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">新しいシーンを追加する</span>
+      <p>左上の「≡」でプロジェクトマネージャーを開き、「<strong>Scenes</strong>」（シーン）の右にある「<strong>＋</strong>」を押します。<br>
+        「Untitled scene」が追加されて、名前を入力できる状態になるので、そのまま <code>Clear</code> と入力して <code>Enter</code>。<br>
+        同じようにもう1つシーンを追加して、名前を <code>Title</code> にしておこう（5-3で使います）。<br>
+        作ったシーンの名前をクリックすると、そのシーンが開きます。</p>
+      <figure class="figure">
+        <a href="img/ch5-01_add-scene.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-01_add-scene.jpg" alt="プロジェクトマネージャーのScenesの「＋」でシーンを追加し、ClearとTitleを作ったところ" loading="lazy"></a>
+        <figcaption>プロジェクトマネージャーのScenesの「＋」でシーンを追加し、ClearとTitleを作ったところ</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">オブジェクトはシーンごと</span> … Stage1で作った Player や Coin は、ほかのシーンのオブジェクト一覧には出てきません。<br>
+      新しいシーンでは、新しくオブジェクトを作ります。<br>
+      （どのシーンでも使いたいオブジェクトは「グローバルオブジェクト」にする方法もあるけど、この講座では使わなくてOK）
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">クリアの文字を置く</span>
+      <p><code>Clear</code> シーンを開いて、オブジェクトパネルの「Add object」→「New object from scratch」→「<strong>Text</strong>」で文字のオブジェクトを作ります（第3章のScoreTextと同じ手順）。<br>
+        「Edit」の画面で、「Object name」を <code>ClearText</code>、「Initial text to display」（最初に表示する文字）を <code>STAGE CLEAR!</code> にしよう。<br>
+        「Size」を <code>72</code> くらいにして Bold にすると、お祝いっぽく目立つよ。</p>
+      <figure class="figure">
+        <a href="img/ch5-02a_edit-cleartext.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-02a_edit-cleartext.jpg" alt="Edit ClearTextの画面。Object name、Size（72）、Bold、Initial text to displayを設定する" loading="lazy"></a>
+        <figcaption>Edit ClearTextの画面。Object name、Size（72）、Bold、Initial text to displayを設定する</figcaption>
+      </figure>
+      <p>同じようにもう1つ Text を作って名前を <code>GuideText</code> にし、文字を <code>Press ENTER</code> にします。<br>
+        2つの文字を画面の真ん中あたりに置こう（「⋮」→「Add instance to the scene」で置いて、X・Y で位置を直すとかんたん）。<br>
+        背景色（何もない場所を右クリック →「Open scene properties」の Scene background color）も変えるとそれっぽくなるよ。</p>
+      <figure class="figure">
+        <a href="img/ch5-02_clear-scene-texts.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-02_clear-scene-texts.jpg" alt="ClearシーンにClearTextとGuideTextを置いたところ" loading="lazy"></a>
+        <figcaption>ClearシーンにClearTextとGuideTextを置いたところ</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">Enterでタイトルへもどるイベントを作る</span>
+      <p><code>Clear</code> シーンのイベントシート（Clear (Events)）を開きます。<br>
+        「Add condition」で <code>key just pressed</code> と検索し、「<strong>Key just pressed</strong>」（キーが押された瞬間、Input ＞ Keyboard）を選びます。<br>
+        「Key to check」に <code>Return</code> と打つと候補が出るので、<code>Return</code> を選ぼう（GDevelopでは Enter キーは Return という名前です）。<br>
+        アクションは「Change the scene」で、Name of the new scene を <code>Title</code> にします。</p>
+      <div class="event-sheet">
+        <div class="ev-label">Clear のイベント</div>
+        <div class="ev-row">
+          <div class="ev-cond"><span class="ev-head">条件</span>Key just pressed: <code>Return</code></div>
+          <div class="ev-act"><span class="ev-head">アクション</span>Change the scene to <code>Title</code></div>
+        </div>
+      </div>
+      <figure class="figure">
+        <a href="img/ch5-03a_key-just-pressed.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-03a_key-just-pressed.jpg" alt="「Key just pressed」を選び、Key to checkをReturnにする" loading="lazy"></a>
+        <figcaption>「Key just pressed」を選び、Key to checkをReturnにする</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch5-03_clear-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-03_clear-events.jpg" alt="Clearシーンのイベント。Returnキーが押されたらTitleへ" loading="lazy"></a>
+        <figcaption>Clearシーンのイベント。Returnキーが押されたらTitleへ</figcaption>
+      </figure>
+    </div>
+
+    <h2>5-3. タイトル画面（Title）を作ろう</h2>
+
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">Title シーンを追加して飾る</span>
+      <p>5-2で作った <code>Title</code> シーンを開きます。<br>
+        Text でゲームの名前（<code>TitleText</code>）と、<code>Press SPACE</code> と書いた案内（<code>StartText</code>）を置こう。<br>
+        ゲームの名前は、<strong>自分のゲームにぴったりのタイトルを考えて</strong>つけてね。</p>
+      <figure class="figure">
+        <a href="img/ch5-04_title-scene.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-04_title-scene.jpg" alt="Titleシーンにゲーム名（TitleText）とPress SPACE（StartText）を置いたところ" loading="lazy"></a>
+        <figcaption>Titleシーンにゲーム名（TitleText）とPress SPACE（StartText）を置いたところ</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">Spaceでゲームを始めるイベントを作る</span>
+      <p><code>Title</code> のイベントシート（Title (Events)）で、条件「Key just pressed: <code>Space</code>」、アクション「Change the scene: <code>Stage1</code>」を作ります。</p>
+      <div class="event-sheet">
+        <div class="ev-label">Title のイベント</div>
+        <div class="ev-row">
+          <div class="ev-cond"><span class="ev-head">条件</span>Key just pressed: <code>Space</code></div>
+          <div class="ev-act"><span class="ev-head">アクション</span>Change the scene to <code>Stage1</code></div>
+        </div>
+      </div>
+      <figure class="figure">
+        <a href="img/ch5-04b_title-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-04b_title-events.jpg" alt="Titleシーンのイベント。SpaceキーでStage1へ" loading="lazy"></a>
+        <figcaption>Titleシーンのイベント。SpaceキーでStage1へ</figcaption>
+      </figure>
+    </div>
+
+    <div class="trouble">
+      <h4>🚨 なぜタイトルはSpace、クリアはEnterなの？</h4>
+      <p>もし両方ともSpaceにすると、クリア画面でSpaceを押した瞬間にタイトルへ行き、<strong>まだSpaceが押されたまま</strong>なので、タイトルもすぐ飛ばされてStage1が始まってしまいます。<br>
+        キーを分けておけば、この「連続で飛ばされる」問題が起きません。<br>
+        条件に「Key pressed」（押されている間ずっと）ではなく「<strong>Key just pressed</strong>」（押された瞬間だけ）を使っているのも、同じ問題を防ぐためです。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">最初に始まるシーンを Title にする</span>
+      <p>プロジェクトマネージャー（≡）で <code>Title</code> を右クリックして、「<strong>Set as start scene</strong>」（最初のシーンにする）を選びます。<br>
+        Title の右に旗のマークがついたら成功。<br>
+        これで、ゲームを起動したときにタイトル画面から始まるようになります。</p>
+      <figure class="figure">
+        <a href="img/ch5-05_set-start-scene.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-05_set-start-scene.jpg" alt="Titleを右クリックして「Set as start scene」を選ぶ" loading="lazy"></a>
+        <figcaption>Titleを右クリックして「Set as start scene」を選ぶ</figcaption>
+      </figure>
+    </div>
+
+    <h2>5-4. ゴール（Goal）を作ろう</h2>
+
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">ゴールの素材をステージの最後に置く</span>
+      <p><code>Stage1</code> シーンに戻り、アセットストアで <code>flag</code> や <code>door</code> と検索。<br>
+        ゴールらしい素材を追加して名前を <code>Goal</code> にし、<strong>ステージのいちばん奥</strong>に置こう。<br>
+        この教科書では「Flag Green」（ライセンスはCC0）を使い、X <code>2500</code>、Y <code>550</code>（地面の上）に置いています。</p>
+      <figure class="figure">
+        <a href="img/ch5-06a_asset-store-flag.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-06a_asset-store-flag.jpg" alt="flagと検索し、Flag Greenを選んでいるところ" loading="lazy"></a>
+        <figcaption>flagと検索し、Flag Greenを選んでいるところ</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch5-06_goal-placed.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-06_goal-placed.jpg" alt="ステージのいちばん奥（X 2500、Y 550）にGoalを置いたところ" loading="lazy"></a>
+        <figcaption>ステージのいちばん奥（X 2500、Y 550）にGoalを置いたところ</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">ゴールにさわったらクリア画面へ</span>
+      <p><code>Stage1</code> のイベントシートに、条件「Collision: <code>Player</code> と <code>Goal</code>」、アクション「Change the scene: <code>Clear</code>」のイベントを追加します。</p>
+      <div class="event-sheet">
+        <div class="ev-label">Stage1 に追加するイベント</div>
+        <div class="ev-row">
+          <div class="ev-cond"><span class="ev-head">条件</span><code>Player</code> is in collision with <code>Goal</code></div>
+          <div class="ev-act"><span class="ev-head">アクション</span>Change the scene to <code>Clear</code></div>
+        </div>
+      </div>
+      <figure class="figure">
+        <a href="img/ch5-07_goal-event-done.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-07_goal-event-done.jpg" alt="Goalにさわったら Clear へ切り替えるイベント" loading="lazy"></a>
+        <figcaption>Goalにさわったら Clear へ切り替えるイベント</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">Title から通しでテストプレイする</span>
+      <p><strong>Title シーン（または Title (Events)）のタブを開いた状態で</strong>Previewを押します。<br>
+        タイトル → Spaceでステージ → ゴール → クリア画面 → Enterでタイトル、と一周できれば大成功！</p>
+      <figure class="figure">
+        <a href="img/ch5-12_preview-clear.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-12_preview-clear.jpg" alt="Goalにさわると、クリア画面に切り替わる" loading="lazy"></a>
+        <figcaption>Goalにさわると、クリア画面に切り替わる</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">Previewは「今開いているシーン」から始まる</span> … Preview ボタンは、作業中のシーンをすぐ試せるように、<strong>今開いているシーン</strong>から始まります。<br>
+      ゲーム全体を最初から通して試したいときは、Title シーンを開いてからPreviewしよう。<br>
+      Preview ボタンの右の「▾」→「<strong>Use this scene to start all previews</strong>」を選ぶと、どのシーンを開いていても今のシーンから始まるように固定することもできます。
+    </div>
+    <figure class="figure">
+      <a href="img/ch5-11a_preview-menu.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-11a_preview-menu.jpg" alt="Previewの右の「▾」のメニュー。「Use this scene to start all previews」" loading="lazy"></a>
+      <figcaption>Previewの右の「▾」のメニュー。「Use this scene to start all previews」</figcaption>
+    </figure>
+
+    <h2>5-5. 効果音とBGMをつけよう</h2>
+    <p>
+      音があるだけで、ゲームは一気に「本物っぽく」なります。<br>
+      コインを取ったときの「チャリン」、敵を踏んだときの「ポコッ」など、短い音を<strong>効果音</strong>、ずっと流れている音楽を<strong>BGM</strong>と呼びます。
+    </p>
+
+    <div class="trouble">
+      <h4>🚨 音の素材のルール</h4>
+      <p>使っていいのは、<strong>GDevelopのアセットストアの無料素材</strong>や、<strong>自分で作った音</strong>だけ。<br>
+        好きなアニメやゲームの曲、動画サイトの音をダウンロードして使うのは、作った人の権利（著作権）をおかすことになるのでNGです。<br>
+        作品を発表したり公開したりするときに問題になるので、最初から守っておこう。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">コインを取ったときの効果音</span>
+      <p><code>Stage1</code> のイベントシートで、第3章で作った「コインを取る」イベントの右側に「Add action」。<br>
+        <code>play a sound</code> と検索して「<strong>Play a sound</strong>」（音を鳴らす、Audio ＞ Sounds and music）を選びます。</p>
+      <figure class="figure">
+        <a href="img/ch5-08_play-sound-action.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-08_play-sound-action.jpg" alt="「Play a sound」を選び、Choose the audio file to useの欄から「Choose from asset store」を選ぶ" loading="lazy"></a>
+        <figcaption>「Play a sound」を選び、Choose the audio file to useの欄から「Choose from asset store」を選ぶ</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">鳴らす音を選ぶ</span>
+      <p>「Choose the audio file to use」（使う音のファイル）の欄をクリックすると、音の選び方が出てきます。<br>
+        「<strong>Choose from asset store</strong>」（アセットストアから選ぶ）を選び、検索欄に <code>coin</code> と入れて探そう。<br>
+        ▷ボタンで試し聞きができます。<br>
+        「チャリン」っぽい音（この教科書では「Coins 1」）を選んで、右下の「<strong>Add to project</strong>」を押します。<br>
+        「Repeat the sound」（くり返す）は No、音量（Volume）は空のまま（100になる）でOK。<br>
+        最後に「Ok」を押します。<br>
+        右の「Create with Jfxr」を押すと、効果音を自分で作ることもできるよ。</p>
+      <figure class="figure">
+        <a href="img/ch5-09_choose-sound-file.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-09_choose-sound-file.jpg" alt="coinと検索してCoins 1を選び、右下の「Add to project」" loading="lazy"></a>
+        <figcaption>coinと検索してCoins 1を選び、右下の「Add to project」</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch5-09b_sound-chosen.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-09b_sound-chosen.jpg" alt="音のファイルにCoins 1.aacが入ったところ。Repeat the soundはNo" loading="lazy"></a>
+        <figcaption>音のファイルにCoins 1.aacが入ったところ。Repeat the soundはNo</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">BGMを流す</span>
+      <p><code>Stage1</code> のイベントシートで、「At the beginning of the scene」のイベント（第4章で目印をかくしたイベント）の右側に「Add action」。<br>
+        <code>play a music</code> と検索して、音楽を流すアクション「<strong>Play a music file</strong>」（音楽ファイルを流す）を選びます。<br>
+        効果音と同じように「Choose from asset store」で <code>music loop</code> などと検索し、BGMにしたい曲を「Add to project」。<br>
+        「<strong>Repeat the sound</strong>」（くり返す）を <strong>Yes</strong> にして「Ok」。</p>
+      <figure class="figure">
+        <a href="img/ch5-10a_music-action.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-10a_music-action.jpg" alt="「Play a music file」でBGMを選び、Repeat the soundをYesにする。黄色いわくは音楽が鳴る条件の注意" loading="lazy"></a>
+        <figcaption>「Play a music file」でBGMを選び、Repeat the soundをYesにする。黄色いわくは音楽が鳴る条件の注意</figcaption>
+      </figure>
+      <div class="term">
+        <span class="word">音楽が鳴らないときは</span> … ブラウザのルールで、<strong>遊ぶ人がクリックやキーを押すまでは音楽を流せません</strong>。<br>
+        アクションの画面の黄色いわくにも、そう書いてあります。<br>
+        タイトル画面でSpaceを押してからStage1が始まるようにしておけば、Stage1のBGMはちゃんと鳴ります。
+      </div>
+      <div class="event-sheet">
+        <div class="ev-label">音を足したイベント（例）</div>
+        <div class="ev-row">
+          <div class="ev-cond"><span class="ev-head">条件</span>At the beginning of the scene</div>
+          <div class="ev-act"><span class="ev-head">アクション</span>Hide <code>TurnLeft</code><br>Hide <code>TurnRight</code><br>Play a music file（くり返し: Yes）</div>
+        </div>
+        <div class="ev-row">
+          <div class="ev-cond"><code>Player</code> is in collision with <code>Coin</code></div>
+          <div class="ev-act">Delete <code>Coin</code><br>Change <code>Score</code>: + 1<br>Play a sound（チャリン）</div>
+        </div>
+      </div>
+      <figure class="figure">
+        <a href="img/ch5-10_music-event.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-10_music-event.jpg" alt="コインの効果音と、シーンの始まりのBGMを足したイベント" loading="lazy"></a>
+        <figcaption>コインの効果音と、シーンの始まりのBGMを足したイベント</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span><span class="step-title">通しでテストプレイして保存する</span>
+      <p>Title シーンを開いてPreview。<br>
+        音が鳴るか、一周できるかを確かめて、<span class="os-win"><code>Ctrl + S</code></span><span class="os-mac"><code>⌘ + S</code></span> で保存しよう。</p>
+      <figure class="figure">
+        <a href="img/ch5-11_preview-title.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-11_preview-title.jpg" alt="Titleシーンを開いてPreviewすると、タイトル画面から始まる" loading="lazy"></a>
+        <figcaption>Titleシーンを開いてPreviewすると、タイトル画面から始まる</figcaption>
+      </figure>
+    </div>
+
+    <h2>5-6. 💪 やってみよう</h2>
+
+    <div class="challenge">
+      <h3>課題1: 踏んだ音・ゴールの音をつけよう</h3>
+      <p>敵を踏んだとき（第4章のイベントE）と、ゴールにさわったときにも、それぞれ別の効果音を鳴らそう。</p>
+      <details class="hint">
+        <summary>ヒントを見る</summary>
+        <p>どちらも、すでにあるイベントの右側に「Play a sound」を足すだけ。<br>
+          ゴールの音は、シーンが切り替わると途中で止まることがあります。<br>
+          クリア画面の「At the beginning of the scene」で鳴らす方法もためしてみよう。</p>
+      </details>
+    </div>
+
+    <div class="challenge">
+      <h3>課題2: タイトル画面をにぎやかにしよう</h3>
+      <p>タイトル画面に、キャラや背景の絵を置いて、ゲームの世界観が伝わる画面にしよう。<br>
+      「このゲーム、遊んでみたい！」と思ってもらえたら合格。</p>
+      <details class="hint">
+        <summary>ヒントを見る</summary>
+        <p>Title シーンでも「Add a new object」からアセットストアの絵が使えるよ。<br>
+          Stage1で使ったのと同じキャラの素材を、もう一度追加してもOK。</p>
+      </details>
+    </div>
+
+    <div class="challenge">
+      <h3>課題3（チャレンジ）: クリア画面にスコアを出そう</h3>
+      <p>クリア画面に「Score: 12」のように、Stage1で取ったスコアを表示しよう。</p>
+      <details class="hint">
+        <summary>ヒントを見る</summary>
+        <p>シーン変数はシーンが変わると消えてしまいます。<br>
+          シーンをまたいで使いたい数は「<strong>グローバル変数</strong>」（ゲーム全体の箱）に入れよう。<br>
+          プロジェクトマネージャーの「Global variables」から作れます。<br>
+          Stage1 のコインのイベントでグローバル変数を増やし、Clear シーンでその数を表示すればOK。<br>
+          Title で Space を押したときにグローバル変数を 0 に戻すのも忘れずに。</p>
+      </details>
+    </div>
+
+    <h2>5-7. 🚨 つまずきポイント集</h2>
+
+    <div class="trouble">
+      <h4>Previewすると、タイトルではなくStage1から始まる</h4>
+      <p><strong>原因:</strong> Previewは「今開いているシーン」から始まる。</p>
+      <p><strong>直し方:</strong> Title シーンのタブを開いてからPreviewしよう。<br>
+        Set as start scene が正しく設定されているかも確認してね。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>ゴールにさわってもクリア画面にならない</h4>
+      <p><strong>原因:</strong> Change the scene のシーン名がまちがっている（<code>clear</code> と小文字にしている、スペースが入っている など）。</p>
+      <p><strong>直し方:</strong> プロジェクトマネージャーのシーン名と、イベントのシーン名が<strong>1文字残らず同じ</strong>か確認しよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>タイトル画面が一瞬で飛ばされる</h4>
+      <p><strong>原因:</strong> クリア画面とタイトル画面で、同じキーを使っている。</p>
+      <p><strong>直し方:</strong> 5-3の「なぜタイトルはSpace、クリアはEnterなの？」を読んで、キーを分けよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>音が鳴らない</h4>
+      <p><strong>原因1:</strong> PCやブラウザのタブの音量がミュートになっている。<br>
+      → 音量とタブのミュートを確認しよう。</p>
+      <p><strong>原因2:</strong> ブラウザは、ページで一度もキーやクリックをしていないと音を鳴らさないことがある。<br>
+      → ゲーム画面を一度クリックしたり、タイトルでキーを押したりしたあとなら鳴るはず。<br>
+      タイトル画面を作ったのは、このためでもあるよ。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>Clear シーンのオブジェクト一覧に Player がいない</h4>
+      <p><strong>原因:</strong> オブジェクトはシーンごとに別々。</p>
+      <p><strong>直し方:</strong> 新しいシーンでは、使う素材をもう一度追加しよう。<br>
+        5-2の「オブジェクトはシーンごと」を読んでね。</p>
+    </div>
+
+    <p>💡 15分たっても直らないときは、次の「AIを味方につけよう」の方法で相談してみよう。</p>
+
+    <h2>5-8. 🤖 AIを味方につけよう</h2>
+    <p>
+      シーンが増えてきたら、相談するときは<strong>「どのシーンの」イベントなのか</strong>も書き添えよう。
+    </p>
+
+    <div class="ai-box">
+      <h3>この章でのAIの使い所</h3>
+      <p><span class="ai-ok">✅ 良い使い方</span> — 自分で15分考えてわからなかったら聞く</p>
+      <ul>
+        <li><strong>ゲームの流れの相談:</strong> 「タイトル → ステージ → クリア」のつなぎ方で迷ったら、シーンとイベントを書き出して確認してもらう</li>
+        <li><strong>演出のアイデア出し:</strong> 「クリア画面を盛り上げる方法」のアイデアを聞いて、自分で選んで作る</li>
+      </ul>
+      <p>そのままコピペで使えるプロンプト（AIへの指示文）の例:</p>
+      <div class="prompt-example">
+        ブラウザ版のGDevelopでアクションゲームを作っている中学生です。<br>
+        シーンは Title、Stage1、Clear の3つです。<br>
+        Stage1 のイベントに「Player is in collision with Goal → Change the scene to Clear」を作りましたが、ゴールにさわってもクリア画面になりません。<br>
+        確認するべきことを順番に教えてください。
+      </div>
+      <div class="prompt-example">
+        横スクロールアクションのクリア画面を、もっと盛り上がる演出にしたいです。<br>
+        GDevelopで中学生でも作れそうなアイデアを5つ、むずかしさの低い順に教えてください。<br>
+        作り方は自分で調べるので、アイデアだけでOKです。
+      </div>
+      <p><span class="ai-ng">🚫 やめておこう</span></p>
+      <ul>
+        <li>ゲームのタイトル（名前）をAIに決めてもらう（自分の作品の名前は、自分でつけよう！）</li>
+        <li>AIに「〇〇の曲を使っていい？」と聞いて、OKと言われたからと使う（著作権はAIの判断ではなく、素材のライセンスで確認する）</li>
+        <li>AIの答えを<strong>試して確かめずに</strong>信じる（AIは古いGDevelopの画面の話をすることもある。<br>
+          必ず自分の画面で確認）</li>
+      </ul>
+    </div>
+
+    <h2>5-9. ✅ チェックリスト</h2>
+    <div class="checklist">
+      <label><input type="checkbox"> Clear シーンを作って、Enterでタイトルへもどれるようにした</label>
+      <label><input type="checkbox"> Title シーンを作って、Spaceでステージが始まるようにした</label>
+      <label><input type="checkbox"> Title を Set as start scene にした</label>
+      <label><input type="checkbox"> ゴールにさわるとクリア画面になった</label>
+      <label><input type="checkbox"> 効果音とBGMが鳴るようになった</label>
+      <label><input type="checkbox"> Title から通しでテストプレイして、一周できた</label>
+    </div>
+    <p>全部チェックできたら第5章クリア！<br>
+      🎉 これで「1本のゲーム」としてつながりました。<br>
+      次回はいよいよ最終回。<br>
+      自由にカスタマイズして自分だけの作品に仕上げ、みんなの前で発表するよ。</p>
+
+    <h2>5-10. 📚 もっと知りたい人へ</h2>
+    <ul>
+      <li><a href="https://wiki.gdevelop.io/gdevelop5/" target="_blank">GDevelop公式Wiki</a> — 「Scenes」「Audio」のページで、シーンと音の公式説明が読める</li>
+      <li><a href="https://wiki.gdevelop.io/gdevelop5/all-features/variables/scene-variables/" target="_blank">変数の解説（公式Wiki）</a> — 課題3のグローバル変数を使うときの参考に</li>
+    </ul>
+
+    <nav class="chapter-nav">
+      <a href="chapter4.html">← 第4章 敵とゲームオーバー</a>
+      <a href="chapter6.html">第6章 仕上げて発表しよう →</a>
+    </nav>
+  </main>
+
+  <footer class="site-footer">
+    横須賀プログラミング"夢"アカデミー GDevelopコース教材
+  </footer>
+
+  <script src="js/os.js"></script>
+</body>
+</html>
