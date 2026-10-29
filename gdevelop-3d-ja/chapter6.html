@@ -364,7 +364,8 @@ WASD：いどう　マウス：まわりを見る　クリック：うつ
         ゾンビは力（フォース）で動いているので、建物をすりぬけたままです（ゾンビらしい、ということにしておこう）。</p>
       <figure class="figure">
         <a href="img/ch6-05_preview-wall.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-05_preview-wall.jpg" alt="プレビューで、主人公が建物のかべの前で止まっている（赤枠）" loading="lazy"></a>
-        <figcaption>建物のかべで止まるようになった（赤枠）</figcaption>
+        <figcaption>建物のかべで止まるようになった（赤枠）。<br>
+          写真は、主人公を人の形に入れかえる前に撮ったもの（オレンジのカプセルが主人公）</figcaption>
       </figure>
     </div>
 
@@ -560,7 +561,34 @@ WASD：いどう　マウス：まわりを見る　クリック：うつ
       まだ決められない人は、「作ってみたいもの」をひとつ考えてくるだけでもOKです。
     </p>
 
-    <h2>6-8. 🚨 つまずきポイント集</h2>
+    <h2>6-9. 🚨 つまずきポイント集</h2>
+
+    <div class="trouble">
+      <h4>プレビューしても、タイトルから始まらない</h4>
+      <p><strong>原因1:</strong> プレビューは、今開いているシーンから始まることがある。<br>
+      → Title のシーンを開いてから「プレビュー」を押そう。</p>
+      <p><strong>原因2:</strong> スタートシーンが Title になっていない。<br>
+      → 6-2 の手順7のとおり、Title の「⋮」→「スタートシーンとして設定」を選んで、旗マークがつくか確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>Space・R・T を押しても画面が変わらない</h4>
+      <p><strong>原因:</strong> イベントを、別のシーンのイベントシートに作ってしまった。</p>
+      <p><strong>直し方:</strong> 上のタブの名前が「Title (イベント)」「GameOver (イベント)」「Clear (イベント)」になっているか確かめよう。<br>
+        Title の文字が出ているときは、Title (イベント) のイベントが動きます。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>やられても GAME OVER の画面にならない</h4>
+      <p><strong>原因:</strong> Battle グループのいちばん下が「シーン "Game Scene" に変更する」のまま。</p>
+      <p><strong>直し方:</strong> 6-2 の手順6のとおり、新しいシーンの名前を「GameOver」に変えよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>タイトルやゲームオーバーの文字が見えない</h4>
+      <p><strong>原因:</strong> 文字の色が、背景の色と同じような暗い色になっている。</p>
+      <p><strong>直し方:</strong> 文字をクリックして、左のプロパティの「色」を黄色や白などの明るい色にしよう。</p>
+    </div>
 
     <div class="trouble">
       <h4>いろいろ変えていたら、急にゲームがおかしくなった</h4>
@@ -593,7 +621,7 @@ WASD：いどう　マウス：まわりを見る　クリック：うつ
     <p>💡 15分たっても直らないときは、次の「AIを味方につけよう」の方法で相談してみよう。<br>
       発表の日は時間が限られているので、早めに講師を呼ぶのもアリです。</p>
 
-    <h2>6-9. 🤖 AIを味方につけよう</h2>
+    <h2>6-10. 🤖 AIを味方につけよう</h2>
     <p>
       最終回のAIの使い方は、<strong>「作品をもっと良くするための相談相手」</strong>。<br>
       ただし、作品と発表の主役はキミです。
@@ -628,8 +656,12 @@ WASD：いどう　マウス：まわりを見る　クリック：うつ
       </ul>
     </div>
 
-    <h2>6-10. ✅ チェックリスト</h2>
+    <h2>6-11. ✅ チェックリスト</h2>
     <div class="checklist">
+      <label><input type="checkbox"> Title・GameOver・Clear のシーンを作った</label>
+      <label><input type="checkbox"> Title をスタートシーンにして、Space でゲームが始まる</label>
+      <label><input type="checkbox"> やられると GAME OVER、ボスをたおすと CLEAR! の画面になり、R と T で移動できる</label>
+      <label><input type="checkbox"> 画面の左下に操作説明（GuideText）を出した</label>
       <label><input type="checkbox"> 仕上げ計画（絶対やること・時間があればやること・こだわり）を書いた</label>
       <label><input type="checkbox"> 計画の「絶対やること」を作り終えた</label>
       <label><input type="checkbox"> 人にテストプレイしてもらい、意見をもとに1か所以上直した</label>
@@ -641,7 +673,7 @@ WASD：いどう　マウス：まわりを見る　クリック：うつ
       🎉 スターターから、自分の力でゲームを1本に仕上げました。<br>
       ここで身につけた力を持って、次の道へ進もう。</p>
 
-    <h2>6-11. 📚 もっと知りたい人へ</h2>
+    <h2>6-12. 📚 もっと知りたい人へ</h2>
     <ul>
       <li><a href="https://wiki.gdevelop.io/gdevelop5/behaviors/physics3d/" target="_blank">公式Wiki「3D physics engine」（英語）</a> — ワザ1の Physics3D のくわしい説明</li>
       <li><a href="https://wiki.gdevelop.io/gdevelop5/all-features/audio/" target="_blank">公式Wiki「Audio」（英語）</a> — 効果音や BGM の鳴らし方</li>
