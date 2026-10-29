@@ -31,42 +31,50 @@
       <h2>🎯 この章でできるようになること</h2>
       <ul>
         <li>アセットストアの素材で、キャラクターの見た目を入れかえられる</li>
-        <li>動いているかどうかで、アニメーションを切りかえられる</li>
-        <li>マウスの位置（CursorX、CursorY）をイベントで使える</li>
-        <li>クリックしたらナイフを作って、マウスのほうへ飛ばせる</li>
+        <li>WASD キーでも矢印キーでも、騎士を動かせる</li>
+        <li>動いているかどうかで、アニメーションと向きを切りかえられる</li>
+        <li>clamp の式で、騎士が画面の外に出ないようにできる</li>
       </ul>
     </div>
+
+    <p>
+      全6回で作るのは「<strong>DUNGEON SURVIVOR</strong>」というゲームです。<br>
+      ダンジョンの部屋に、ゴブリンがどんどんおしよせてきます。<br>
+      騎士は自動でナイフを投げるので、プレイヤーは動いてよけるだけ。<br>
+      ジェムを集めてレベルアップし、15分後に出てくるボスをたおせばクリアです。<br>
+      第1回は、その主人公の騎士を動かすところから始めます。
+    </p>
 
     <h2>1-1. この章で作るしくみ</h2>
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>歩いている</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>走るアニメーションにする</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>w キーを押している（a・s・d も同じ）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>上キーを押したことにする（下・左・右も同じ）</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>歩いていない</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>立っているアニメーションにする</div>
-      </div>
-      <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>マウスがプレイヤーより左にある</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>a キーか ← キーを押している</div>
         <div class="ev-act"><span class="ev-head">アクション</span>左を向く（左右反転）</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>左クリックをはなした</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ナイフを作って、マウスのほうへ飛ばす</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>d キーか → キーを押している</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>右を向く（反転をやめる）</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ナイフがプレイヤーから遠くなった</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ナイフを消す</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>動いている ／ それ以外</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>走るアニメーション ／ 立っているアニメーション</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>（いつも）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>画面の外に出ないように、位置を中におさめる</div>
       </div>
     </div>
 
     <h2>1-2. トップダウンのスターターから作ろう</h2>
     <p>
       今回は「<strong>Top-down</strong>」（真上から見下ろす）のスターターから始めます。<br>
-      歩く・壁にぶつかる・カメラがついてくる、といった基本はもう入っています。<br>
-      そこに、騎士の見た目やナイフ、敵を足していきます。
+      歩く・壁にぶつかる、といった基本はもう入っています。<br>
+      そこに、騎士の見た目や、自動で飛ぶナイフ、敵を足していきます。
     </p>
 
     <div class="step">
@@ -103,6 +111,12 @@
       </figure>
     </div>
 
+    <div class="term">
+      <span class="word">画面の大きさ</span> … このゲームの画面は、横 1280・たて 720 です。<br>
+      カメラは動かさず、ひとつの部屋の中で戦います。<br>
+      このあと出てくる 1280 や 720 という数は、画面の横はばと高さのことです。
+    </div>
+
     <h2>1-3. プレイヤーを騎士にしよう</h2>
     <div class="step">
       <span class="step-num">4</span><span class="step-title">Dungeon のパックを開く</span>
@@ -135,29 +149,24 @@
     </div>
 
     <div class="step">
-      <span class="step-num">6</span><span class="step-title">向きが回らないようにする</span>
+      <span class="step-num">6</span><span class="step-title">カメラの動きを外して、向きが回らないようにする</span>
       <p>シーンの騎士をクリックすると、左に Player のプロパティが出ます。<br>
-        「<strong>TopDownMovement</strong>」のところの「<strong>Rotate object</strong>」をOFFにします。<br>
-        ONのままだと、歩く方向に合わせて騎士がくるくる回ってしまいます。<br>
-        このゲームでは、左右の向きはあとで「反転」で作ります。</p>
+        「Behaviors」のところに、「<strong>SmoothCamera</strong>」と「<strong>TopDownMovement</strong>」の2つがあります。</p>
+      <ul>
+        <li><strong>SmoothCamera</strong> … カメラがプレイヤーを追いかけるビヘイビア。<br>
+          このゲームはカメラを動かさないので、右の「<strong>ー</strong>」を押して外します。</li>
+        <li><strong>TopDownMovement</strong> … 歩くためのビヘイビア。<br>
+          この中の「<strong>Rotate object</strong>」をOFFにします。<br>
+          ONのままだと、歩く方向に合わせて騎士がくるくる回ってしまいます。</li>
+      </ul>
       <figure class="figure">
-        <a href="img/ch1-06_rotate-off.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-06_rotate-off.jpg" alt="PlayerのTopDownMovementで、Rotate objectをOFF（赤枠）" loading="lazy"></a>
-        <figcaption>「Rotate object」をOFF（赤枠）</figcaption>
+        <a href="img/ch1-06_rotate-off.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-06_rotate-off.jpg" alt="Playerのプロパティ。上にSmoothCamera、下にTopDownMovementとRotate object（赤枠）" loading="lazy"></a>
+        <figcaption>上の SmoothCamera は「ー」で外す。<br>
+          TopDownMovement の「Rotate object」はOFF（赤枠）</figcaption>
       </figure>
     </div>
 
-    <div class="step">
-      <span class="step-num">7</span><span class="step-title">ナイフを追加する</span>
-      <p>もう一度「＋」から Dungeon のパックを開き、「<strong>Weapon</strong>」の中の「<strong>Knife</strong>」を選んでプロジェクトに追加します。<br>
-        ナイフはイベントで作り出すので、シーンに置かなくてOK。<br>
-        もし置いてしまったら、シーンのナイフをクリックして <code>Delete</code> キーで消しておこう。</p>
-      <figure class="figure">
-        <a href="img/ch1-07_weapon-knife.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-07_weapon-knife.jpg" alt="DungeonパックのWeaponフォルダ。Knife（赤枠）を選ぶ" loading="lazy"></a>
-        <figcaption>Weapon の「Knife」（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <h2>1-4. 歩くアニメーションと向きをつけよう</h2>
+    <h2>1-4. WASD キーで動かそう</h2>
     <p>
       上のタブの「<strong>Game Scene (Events)</strong>」を開きます。<br>
       スターターのイベント（プレイヤーをかべから押しもどすイベント）は、消さずにそのまま残しておきます。<br>
@@ -165,116 +174,136 @@
       グループをクリックしてから <code>Shift + D</code> を押すと、グループの中にイベントができます。
     </p>
 
-    <div class="step">
-      <span class="step-num">8</span><span class="step-title">歩いているときは Run、止まっているときは Idle</span>
-      <p>条件は <code>is moving</code> で検索 →「<strong>Is moving</strong>」（Top-down movement のもの）、Object は <code>Player</code>。<br>
-        アクションは <code>animation by name</code> で検索 →「<strong>Animation (by name)</strong>」で <code>Player</code> を「<strong>Run</strong>」。</p>
-      <p>イベントをクリックして <code>Shift + A</code> で下に新しいイベントを作ります。<br>
-        条件はまた「Is moving」で <code>Player</code> にして、下の「<strong>Invert condition</strong>」（条件を反対にする）をONにします。<br>
-        アクションは「Animation (by name)」で「<strong>Idle</strong>」。</p>
-      <figure class="figure">
-        <a href="img/ch1-08_is-moving.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-08_is-moving.jpg" alt="Is movingの条件。ObjectはPlayer（赤枠）" loading="lazy"></a>
-        <figcaption>「Is moving」で Player（赤枠）</figcaption>
-      </figure>
+    <div class="term">
+      <span class="word">矢印キーは最初から動く</span> … TopDownMovement は、何もしなくても矢印キーで動くようになっています。<br>
+      ここでは WASD キーでも動くように、「W を押したら、上キーを押したことにする」というイベントを作ります。
     </div>
 
     <div class="step">
-      <span class="step-num">9</span><span class="step-title">マウスのほうを向く</span>
-      <p>新しいイベントを作り、条件に <code>compare two numbers</code> で検索 →「<strong>Compare two numbers</strong>」を入れます。<br>
-        First expression に <code>CursorX()</code>、Sign は「<strong>&lt; (less than)</strong>」、Second expression に <code>Player.CenterX()</code>。<br>
-        「マウスのXが、プレイヤーのまん中より小さい」＝「マウスが左にある」という意味です。</p>
-      <p>アクションは <code>flip</code> で検索 →「<strong>Flip the object horizontally</strong>」、<code>Player</code> を「<strong>Yes</strong>」（反転する）。<br>
-        もう1つイベントを作り、Sign を「<strong>≥ (greater or equal to)</strong>」にして、Flip を「<strong>No</strong>」にします。</p>
+      <span class="step-num">7</span><span class="step-title">w キーで上に動く</span>
+      <p>条件は <code>key pressed</code> で検索 →「<strong>Key pressed</strong>」。<br>
+        「Key to check」に <code>w</code> を入れて「Ok」。<br>
+        「Key just pressed」とちがい、「Key pressed」はキーを押しているあいだずっと続きます。</p>
       <figure class="figure">
-        <a href="img/ch1-09_cursor-left.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-09_cursor-left.jpg" alt="Compare two numbersでCursorX()とPlayer.CenterX()をくらべる（赤枠）" loading="lazy"></a>
-        <figcaption>CursorX() &lt; Player.CenterX()（赤枠）</figcaption>
+        <a href="img/ch1-07_key-w.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-07_key-w.jpg" alt="Key pressedの条件。Key to checkにw（赤枠）" loading="lazy"></a>
+        <figcaption>「Key pressed」で <code>w</code>（赤枠）</figcaption>
       </figure>
+      <p>アクションは、左の一覧で <code>Player</code> を選び、「<strong>Simulate up key press</strong>」を選びます。<br>
+        Behavior は <code>TopDownMovement</code> のままで「Ok」。<br>
+        「Simulate」は「押したことにする」という意味です。</p>
       <figure class="figure">
-        <a href="img/ch1-10_flip.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-10_flip.jpg" alt="Flip the object horizontallyのアクション。Player、Yes（赤枠）" loading="lazy"></a>
+        <a href="img/ch1-08_simulate-up.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-08_simulate-up.jpg" alt="Playerのアクション一覧で、Simulate up key press（赤枠）" loading="lazy"></a>
+        <figcaption>Player の「Simulate up key press」（赤枠）。<br>
+          写真は完成したときのものなので、左の一覧にはこれから作るオブジェクトもならんでいます</figcaption>
+      </figure>
+      <p>同じようにして、あと3つイベントを作ります。</p>
+      <table>
+        <tr><th>条件（Key pressed）</th><th>アクション</th></tr>
+        <tr><td><code>s</code></td><td>Simulate down key press</td></tr>
+        <tr><td><code>a</code></td><td>Simulate left key press</td></tr>
+        <tr><td><code>d</code></td><td>Simulate right key press</td></tr>
+      </table>
+    </div>
+
+    <div class="step">
+      <span class="step-num">8</span><span class="step-title">左右の向きを変える</span>
+      <p><code>a</code> のイベントに、アクションをもう1つ足します。<br>
+        <code>flip</code> で検索 →「<strong>Flip the object horizontally</strong>」、<code>Player</code>、Activate flipping は「<strong>Yes</strong>」。<br>
+        <code>d</code> のイベントにも同じアクションを足して、こちらは「<strong>No</strong>」にします。</p>
+      <figure class="figure">
+        <a href="img/ch1-09_flip.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-09_flip.jpg" alt="Flip the object horizontallyのアクション。Activate flipping Yes（赤枠）" loading="lazy"></a>
         <figcaption>「Flip the object horizontally」で Yes（赤枠）</figcaption>
       </figure>
+      <p>矢印キーで歩いたときも向きが変わるように、イベントをあと2つ作ります。<br>
+        矢印キーは最初から動くので、こちらは反転だけでOKです。</p>
+      <table>
+        <tr><th>条件（Key pressed）</th><th>アクション（Flip the object horizontally）</th></tr>
+        <tr><td><code>Left</code>（← キー）</td><td>Player を Yes</td></tr>
+        <tr><td><code>Right</code>（→ キー）</td><td>Player を No</td></tr>
+      </table>
     </div>
 
     <div class="term">
-      <span class="word">CursorX()</span> … マウスのカーソルが、ステージのどこにあるか（X座標）を教えてくれる式。<br>
-      Y座標は CursorY() です。<br>
-      Player.CenterX() は、プレイヤーのまん中のX座標です。
+      <span class="word">反転（はんてん）</span> … 絵を左右うら返しにすること。<br>
+      騎士の絵はもともと右を向いているので、「Yes」で左向き、「No」でもとの右向きになります。
     </div>
 
-    <figure class="figure">
-        <a href="img/ch1-14_player-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-14_player-events.jpg" alt="Playerグループの4つのイベント（赤枠）" loading="lazy"></a>
-        <figcaption>Player グループのイベント4つ（赤枠）</figcaption>
-    </figure>
-
-    <h2>1-5. ナイフを投げよう</h2>
-    <p>新しいグループ <code>Knife</code> を作り、その中にイベントを作ります。</p>
+    <h2>1-5. 走るアニメーションと、画面のはし</h2>
+    <div class="step">
+      <span class="step-num">9</span><span class="step-title">動いているときは Run、それ以外は Idle</span>
+      <p>新しいイベントの条件に、<code>is moving</code> で検索 →「<strong>Is moving</strong>」（Top-down movement のもの）、Object は <code>Player</code>。<br>
+        アクションは <code>animation by name</code> で検索 →「<strong>Animation (by name)</strong>」で <code>Player</code> を「<strong>Run</strong>」。</p>
+      <figure class="figure">
+        <a href="img/ch1-10_is-moving.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-10_is-moving.jpg" alt="Playerの条件一覧で、Is moving（赤枠）" loading="lazy"></a>
+        <figcaption>Player の「Is moving」（赤枠）</figcaption>
+      </figure>
+      <p>次に、このイベントを右クリックして「<strong>Add</strong>」→「<strong>Else</strong>」を選びます。<br>
+        すぐ下に「Else」というイベントができます。<br>
+        そのアクションに「Animation (by name)」で <code>Player</code> を「<strong>Idle</strong>」。<br>
+        「動いているなら Run、そうでなければ Idle」という意味になります。</p>
+    </div>
 
     <div class="step">
-      <span class="step-num">10</span><span class="step-title">クリックしたらナイフを作る</span>
-      <p>条件は <code>mouse button released</code> で検索 →「<strong>Mouse button released</strong>」、ボタンは「<strong>Left (primary)</strong>」。<br>
-        アクションは4つです。</p>
+      <span class="step-num">10</span><span class="step-title">画面の外に出ないようにする</span>
+      <p>条件のないイベントを作ります（条件は空のままでOK）。<br>
+        アクションは、左の一覧で <code>Player</code> を選び、「<strong>Position</strong>」を選びます。<br>
+        Modification's sign は2つとも「<strong>= (set to)</strong>」にして、X position と Y position に下の式を入れます。</p>
+      <div class="code-block"><span class="code-label">X position</span><button class="copy-btn" type="button">コピー</button><pre><code>clamp(Player.X(), 0, 1280 - Player.Width())</code></pre></div>
+      <div class="code-block"><span class="code-label">Y position</span><button class="copy-btn" type="button">コピー</button><pre><code>clamp(Player.Y(), 0, 720 - Player.Height())</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch1-11_clamp.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-11_clamp.jpg" alt="Positionのアクション。X positionとY positionにclampの式（赤枠）" loading="lazy"></a>
+        <figcaption>「Position」で X と Y に clamp の式（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">clamp（クランプ）</span> … 「はみ出さないように、間におさめる」計算。<br>
+      clamp(数, 下, 上) は、数が「下」より小さければ「下」に、「上」より大きければ「上」にします。<br>
+      Player.X() は騎士の左はしのX座標なので、右のはしは「1280 − 騎士の横はば」までにしています。<br>
+      たても同じで、「720 − 騎士の高さ」までです。<br>
+      条件がないので、いつもこの計算をして、騎士を画面の中にもどしてくれます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">11</span><span class="step-title">Player グループを見直す</span>
+      <p>Player グループに、次のイベントがならんでいれば OK です。</p>
       <ul>
-        <li><code>create an object</code> で検索 →「<strong>Create an object</strong>」、<code>Knife</code> を X <code>Player.CenterX()</code>、Y <code>Player.CenterY()</code> に作る</li>
-        <li><code>angle</code> で検索 →「<strong>Angle</strong>」、<code>Knife</code> を下の式にする</li>
-        <li><code>move toward a position</code> で検索 →「<strong>Add a force to move toward a position</strong>」、<code>Knife</code>、X <code>CursorX()</code>、Y <code>CursorY()</code>、Speed <code>600</code>、下は「<strong>Permanent</strong>」</li>
-        <li><code>scale</code> で検索 →「<strong>Scale</strong>」、<code>Knife</code> を <code>3</code>（3倍の大きさ）</li>
+        <li>w・s・a・d を押している（a と d は反転もする）</li>
+        <li>Left・Right を押している（反転だけ）</li>
+        <li>Is moving → Run ／ Else → Idle</li>
+        <li>条件なし → 位置を clamp でおさめる</li>
       </ul>
-      <div class="code-block"><span class="code-label">Knife の Angle</span><button class="copy-btn" type="button">コピー</button><pre><code>Knife.AngleToPosition(CursorX(), CursorY()) + 90</code></pre></div>
       <figure class="figure">
-        <a href="img/ch1-11_create-knife.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-11_create-knife.jpg" alt="Create an objectでKnifeをPlayer.CenterX()、Player.CenterY()に作る（赤枠）" loading="lazy"></a>
-        <figcaption>プレイヤーのまん中にナイフを作る（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch1-12_knife-angle.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-12_knife-angle.jpg" alt="KnifeのAngleに式を入れたところ（赤枠）" loading="lazy"></a>
-        <figcaption>ナイフをマウスのほうに向ける（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch1-13_knife-force.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-13_knife-force.jpg" alt="Add a force to move toward a position。CursorX()、CursorY()、600、Permanent（赤枠）" loading="lazy"></a>
-        <figcaption>マウスのほうへ 600 の速さで、Permanent（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch1-13b_knife-scale.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-13b_knife-scale.jpg" alt="ScaleのアクションでKnifeを3（赤枠）" loading="lazy"></a>
-        <figcaption>ナイフを3倍の大きさに（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="term">
-      <span class="word">+ 90 のわけ</span> … AngleToPosition は「ナイフからマウスへの向き」を角度で教えてくれます。<br>
-      でも Knife の画像は、もともと上を向いています。<br>
-      そのままだと横向きに飛んでしまうので、90度足して、刃先がマウスのほうを向くようにしています。
-    </div>
-
-    <div class="step">
-      <span class="step-num">11</span><span class="step-title">遠くへ行ったナイフを消す</span>
-      <p>新しいイベントを作り、条件に「<strong>Distance between two objects</strong>」で <code>Knife</code> と <code>Player</code>、距離 <code>600</code>。<br>
-        「Invert condition」をONにして「600 より遠い」にします。<br>
-        アクションは「<strong>Delete the object</strong>」で <code>Knife</code>。</p>
-      <figure class="figure">
-        <a href="img/ch1-15_knife-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-15_knife-events.jpg" alt="Knifeグループの2つのイベント（赤枠）" loading="lazy"></a>
-        <figcaption>Knife グループのイベント2つ（赤枠）</figcaption>
+        <a href="img/ch1-12_player-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-12_player-events.jpg" alt="Playerグループのイベント。キーのイベント、Run と Idle、clamp（赤枠）" loading="lazy"></a>
+        <figcaption>Player グループのイベント（赤枠）。<br>
+          写真は完成したときのものです。<br>
+          「Change the max. speed of」の行は第4章で、いちばん下の「FaceAngle」の行は第2章で足します</figcaption>
       </figure>
     </div>
 
     <div class="step">
       <span class="step-num">12</span><span class="step-title">保存して Preview</span>
-      <p><code>Ctrl + S</code>（Macは <code>Cmd + S</code>）で保存してから Preview します。<br>
-        矢印キーで歩くと走るアニメーションになり、止まると立つアニメーションにもどります。<br>
-        マウスを左右に動かすと、騎士がマウスのほうを向きます。<br>
-        クリックするたびに、マウスのほうへナイフが飛んでいけば成功！</p>
+      <p><span class="os-win"><code>Ctrl + S</code></span><span class="os-mac"><code>⌘ + S</code></span> で保存してから Preview します。<br>
+        WASD キーでも矢印キーでも、騎士が動きます。<br>
+        歩くと走るアニメーションになり、止まると立つアニメーションにもどります。<br>
+        左へ歩くと左を、右へ歩くと右を向きます。<br>
+        画面のはしまで歩いても、外に出ずに止まれば成功！</p>
       <figure class="figure">
-        <a href="img/ch1-16_preview-throw.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-16_preview-throw.jpg" alt="Previewで、騎士（赤枠）からナイフ（赤枠）が飛んでいる" loading="lazy"></a>
-        <figcaption>騎士からナイフが飛んでいく（赤枠）</figcaption>
+        <a href="img/ch1-13_preview.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-13_preview.jpg" alt="Previewで、部屋のまん中に騎士がいる（赤枠）" loading="lazy"></a>
+        <figcaption>騎士（赤枠）が動けば成功。<br>
+          写真は完成したときのものなので、左上の体力バーや上の時間などは、まだ出ていなくて大丈夫です</figcaption>
       </figure>
     </div>
 
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ナイフの速さ（600）や大きさ（3）を変えてみよう。<br>
-        Weapon フォルダのほかの武器（斧やハンマーなど）にかえるのもおもしろいよ。</p>
+      <p>騎士の歩く速さを変えてみよう。<br>
+        Dungeon パックのほかのキャラ（エルフや魔法使いなど）に「Swap assets」をするのもおもしろいよ。</p>
       <details class="hint">
         <summary>ヒント</summary>
-        <p>Knife の「⋮」から「Swap assets」を使うと、名前はそのままで見た目だけ入れかえられます。<br>
-          向きがずれたら、Angle の式の「+ 90」を「+ 45」などに変えてみよう。</p>
+        <p>速さは、シーンの騎士をクリックして、TopDownMovement の「Max. speed」の数字を変えます。<br>
+          第4章で、この速さはイベントで決めるようになります。<br>
+          キャラを入れかえるときは、Idle と Run のアニメーションがあるものを選ぼう。</p>
       </details>
     </div>
 
@@ -287,37 +316,46 @@
     </div>
 
     <div class="trouble">
-      <h4>ナイフが横向きに飛ぶ</h4>
-      <p><strong>原因:</strong> Angle の式に「+ 90」がない。</p>
-      <p><strong>直し方:</strong> 式が <code>Knife.AngleToPosition(CursorX(), CursorY()) + 90</code> になっているか確かめよう。</p>
-    </div>
-
-    <div class="trouble">
-      <h4>ナイフが出るけど動かない</h4>
-      <p><strong>原因:</strong> フォースが「Instant」になっている。</p>
-      <p><strong>直し方:</strong> 「Add a force to move toward a position」を開いて、「Permanent」を選びなおそう。</p>
+      <h4>WASD で動かない（矢印キーでは動く）</h4>
+      <p><strong>原因:</strong> 「Key just pressed」を選んでしまった、またはアクションの Object が Player になっていない。</p>
+      <p><strong>直し方:</strong> 条件が「<strong>Key pressed</strong>」になっているか、アクションが Player の「Simulate up key press」になっているか確かめよう。</p>
     </div>
 
     <div class="trouble">
       <h4>左右の向きが逆になる</h4>
       <p><strong>原因:</strong> 「Yes」と「No」が反対になっている。</p>
-      <p><strong>直し方:</strong> マウスが左（&lt;）のときに Yes、右（≥）のときに No になっているか確かめよう。</p>
+      <p><strong>直し方:</strong> 左（a・Left）のときに Yes、右（d・Right）のときに No になっているか確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>画面のはしで止まらない・はしから動けなくなる</h4>
+      <p><strong>原因:</strong> clamp の式の X と Y が逆、または 1280 と 720 が入れかわっている。</p>
+      <p><strong>直し方:</strong> X position に <code>1280 - Player.Width()</code>、Y position に <code>720 - Player.Height()</code> の式が入っているか確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>止まっても走るアニメーションのまま</h4>
+      <p><strong>原因:</strong> 「Else」が、「Is moving」のイベントのすぐ下にない。</p>
+      <p><strong>直し方:</strong> 「Else」は、すぐ上のイベントの条件の反対のときに動きます。<br>
+        「Is moving」のすぐ下にドラッグして動かそう。</p>
     </div>
 
     <h2>1-7. ✅ チェックリスト</h2>
     <div class="checklist">
       <label><input type="checkbox"> Top-down のスターターから my-dungeon を作った</label>
       <label><input type="checkbox"> Swap assets で Player を騎士にした</label>
+      <label><input type="checkbox"> SmoothCamera を外し、Rotate object をOFFにした</label>
+      <label><input type="checkbox"> WASD キーでも矢印キーでも動く</label>
+      <label><input type="checkbox"> 左右に歩くと、そっちを向く</label>
       <label><input type="checkbox"> 歩くと Run、止まると Idle になる</label>
-      <label><input type="checkbox"> 騎士がマウスのほうを向く</label>
-      <label><input type="checkbox"> クリックでナイフが飛び、遠くで消える</label>
+      <label><input type="checkbox"> 画面のはしで止まり、外に出ない</label>
     </div>
     <p>全部チェックできたら第1章クリア！<br>
-      🎉 次回は、ゴブリンがおそってくるよ。</p>
+      🎉 次回は、騎士が自動でナイフを投げるようにするよ。</p>
 
     <nav class="chapter-nav">
       <a href="chapter0.html">← 第0章 事前準備</a>
-      <a href="chapter2.html">第2章 敵がおそってくる →</a>
+      <a href="chapter2.html">第2章 ナイフを自動で投げよう →</a>
     </nav>
   </main>
 

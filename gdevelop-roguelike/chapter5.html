@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第5章 ウェーブとショップ | 夢アカGDevelop教科書（ローグライク編）</title>
+  <title>第5章 だんだん強くなる敵とボス | 夢アカGDevelop教科書（ローグライク編）</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <main class="container">
     <div class="chapter-title">
       <span class="chapter-num">第5章</span>
-      <h1>ウェーブとショップ</h1>
+      <h1>だんだん強くなる敵とボス</h1>
       <div class="date">📅 第5回の講習で使います（日付が決まったらここに記載）</div>
     </div>
 
@@ -30,210 +30,267 @@
     <div class="goal-box">
       <h2>🎯 この章でできるようになること</h2>
       <ul>
-        <li>タイマーと変数で、時間がたつほどむずかしくなるしくみを作れる</li>
-        <li>式の中で変数を使って、数をかえられる</li>
-        <li>キーを押したときの条件で、ショップ（買い物）を作れる</li>
+        <li>TimeDelta() で、たった時間を数えて「○分○秒」と表示できる</li>
+        <li>たった時間を式に入れて、だんだんむずかしくなるゲームにできる</li>
+        <li>オブジェクトを複製して、ボスを作れる</li>
+        <li>「1回だけ動く」目じるしの変数を使って、ボスを1体だけ出せる</li>
       </ul>
     </div>
 
     <h2>5-1. この章で作るしくみ</h2>
-    <p>
-      ローグライクのゲームでは、時間がたつほど敵が強く（多く）なっていきます。<br>
-      このまとまりを「<strong>ウェーブ</strong>」（波）とよびます。<br>
-      かわりに、倒した敵のドクロを使って回復できる「<strong>ショップ</strong>」を作ります。
-    </p>
-
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>シーンが始まったとき</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ウェーブのタイマーをスタート</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>（いつも）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>たった時間 Elapsed をふやす。<br>画面の上に「○分○秒」と出す</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ウェーブのタイマーが15秒をこえた</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ウェーブを1ふやす<br>タイマーをリセット</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>（ゴブリンの式を書きかえ）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>時間がたつほど、たくさん・速く・かたいゴブリンが出る</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンのタイマーが「2 ÷ ウェーブ」秒をこえた（第2章を変える）</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンを作る</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>Elapsed が BossTime 以上で、ボスがまだ出ていない</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>大きなボスを1体出す</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>H キーをはなした<br>ドクロが5こ以上</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ドクロを5へらす<br>体力を100にもどす</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>ナイフがボスに当たった ／ ボスが騎士にさわった</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ボスの体力をへらす ／ 騎士の体力を大きくへらす</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>ボスの体力が0以下</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>クリア！</div>
       </div>
     </div>
 
-    <h2>5-2. 変数と文字を用意しよう</h2>
+    <h2>5-2. 時間を数えよう</h2>
     <div class="step">
-      <span class="step-num">1</span><span class="step-title">シーン変数 Wave を作る</span>
-      <p>第4章と同じように Scene Variables を開き、<code>Wave</code>（今のウェーブ）を作ります。<br>
-        型は Number、値は <code>1</code>。</p>
-      <figure class="figure">
-        <a href="img/ch5-01_wave-var.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-01_wave-var.jpg" alt="Game Scene variablesにWave 1を足したところ（赤枠）" loading="lazy"></a>
-        <figcaption><code>Wave</code> = <code>1</code>（赤枠）</figcaption>
-      </figure>
+      <span class="step-num">1</span><span class="step-title">たった時間をふやす</span>
+      <p>「Game Scene (Events)」の Start グループで、「At the beginning of the scene」の下に、条件のないイベントを作ります。<br>
+        アクションは「Change variable value」で <code>Elapsed</code> を「+ (add)」<code>TimeDelta()</code>。<br>
+        Elapsed は第3章で作った変数で、ゲームが始まってから何秒たったかが入ります。</p>
     </div>
 
-    <div class="step">
-      <span class="step-num">2</span><span class="step-title">WaveText と ShopText を作る</span>
-      <p>一覧の <code>KillText</code> の「⋮」から「<strong>Duplicate</strong>」（コピーを作る）を選び、名前を <code>WaveText</code> にします。<br>
-        もう1回 Duplicate して、<code>ShopText</code> も作ります。<br>
-        WaveText をクリックして、左の Text を <code>Wave 1</code> にします。<br>
-        ShopText をクリックして、左の Text を <code>[H] Heal = 5 skulls</code>（Hキーで回復、ドクロ5こ）、Font size を <code>28</code> にします。</p>
-      <figure class="figure">
-        <a href="img/ch5-02_shoptext.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-02_shoptext.jpg" alt="ShopTextのTextとFont size（赤枠）、一覧のWaveTextとShopText（赤枠）" loading="lazy"></a>
-        <figcaption>ShopText の文字と大きさ（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">3</span><span class="step-title">画面に置く</span>
-      <p>Layers で <code>UI</code> の丸いボタンを選んでから、「⋮」→「<strong>Add instance to the scene</strong>」で2つを置きます。<br>
-        <code>WaveText</code> は X <code>20</code>、Y <code>100</code>。<br>
-        <code>ShopText</code> は X <code>1010</code>、Y <code>20</code>（右上）。<br>
-        置き終わったら Base layer の丸いボタンにもどそう。</p>
-      <figure class="figure">
-        <a href="img/ch5-03_ui-texts.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-03_ui-texts.jpg" alt="左上にWave 1、右上に[H] Heal = 5 skulls（赤枠）" loading="lazy"></a>
-        <figcaption>WaveText と ShopText（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <h2>5-3. ウェーブを作ろう</h2>
-    <div class="step">
-      <span class="step-num">4</span><span class="step-title">15秒ごとにウェーブをふやす</span>
-      <p>イベントシートのいちばん下に、「At the beginning of the scene」のイベントを作り、「Start (or reset) a scene timer」で <code>"WaveTimer"</code> をスタートします。</p>
-      <p>次のイベントの条件は「Value of a scene timer」で <code>"WaveTimer"</code>、Sign は「≥」、Time は <code>15</code>。<br>
-        アクションは2つです。</p>
-      <ul>
-        <li>「Change variable value」で <code>Wave</code> を「+ (add)」で <code>1</code></li>
-        <li>「Start (or reset) a scene timer」で <code>"WaveTimer"</code></li>
-      </ul>
-      <figure class="figure">
-        <a href="img/ch5-04_wave-timer.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-04_wave-timer.jpg" alt="Value of a scene timer。&quot;WaveTimer&quot;、≥、15（赤枠）" loading="lazy"></a>
-        <figcaption>WaveTimer が 15 秒以上（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">5</span><span class="step-title">ウェーブが進むと、ゴブリンが早く出てくる</span>
-      <p>Enemy グループを開き、「The timer "EnemyTimer" ≥ 2 seconds」の条件をダブルクリックします。<br>
-        Time の <code>2</code> のうしろに <code> / Wave</code> を足して、<code>2 / Wave</code> にします。<br>
-        ウェーブ1は2秒ごと、ウェーブ2は1秒ごと、ウェーブ4は0.5秒ごとにゴブリンが出てきます。</p>
-      <figure class="figure">
-        <a href="img/ch5-06_spawn-faster.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-06_spawn-faster.jpg" alt="EnemyTimerの条件のTimeを2 / Waveにしたところ（赤枠）" loading="lazy"></a>
-        <figcaption>Time を <code>2 / Wave</code> に（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <h2>5-4. ショップを作ろう</h2>
     <div class="term">
-      <span class="word">ドクロはお金のかわり</span> … このゲームでは、倒した数（ドクロの数）をお金のように使って買い物をします。<br>
-      回復するとドクロの数がへるけど、それでOKです。
+      <span class="word">Elapsed ＋ TimeDelta()</span> … 毎回「前の画面からたった秒数」を足していくので、Elapsed は時計のようにふえていきます。<br>
+      レベルアップ中はタイムスケールが 0 なので、TimeDelta() も 0 になります。<br>
+      だから、強化をえらんでいるあいだは時間がふえません。
     </div>
 
     <div class="step">
-      <span class="step-num">6</span><span class="step-title">H キーで回復する</span>
-      <p>新しいイベントを作り、条件を2つ入れます。</p>
-      <ul>
-        <li><code>key released</code> で検索 →「<strong>Key released</strong>」、Key は一覧から <code>h</code></li>
-        <li>「Variable value」で <code>Kills</code> が「≥」<code>5</code></li>
-      </ul>
+      <span class="step-num">2</span><span class="step-title">時間の文字を出す</span>
+      <p>「Game Scene」のタブで、「Text」の <code>TimeText</code> を作ります。<br>
+        Initial text to display は <code>0分0秒</code>、Size は KillText と同じくらい。<br>
+        UI レイヤーの、画面の上のまん中に置きます。</p>
+      <p>イベントの UI グループで、条件のないイベントにアクションを足します。<br>
+        <code>TimeText</code> の「Text」で「= (set to)」、Value は下の式です。</p>
+      <div class="code-block"><span class="code-label">TimeText の Text</span><button class="copy-btn" type="button">コピー</button><pre><code>ToString(floor(Elapsed / 60)) + "分" + ToString(mod(floor(Elapsed), 60)) + "秒"</code></pre></div>
+    </div>
+
+    <div class="term">
+      <span class="word">○分○秒 の式</span> … floor() は小数を切りすてる式です。<br>
+      Elapsed ÷ 60 を切りすてると「何分」、Elapsed を 60 で割ったあまり（mod）が「何秒」になります。<br>
+      たとえば Elapsed が 75 なら、1分15秒です。
+    </div>
+
+    <h2>5-3. ゴブリンをだんだん強くしよう</h2>
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">Enemy グループの式を書きかえる</span>
+      <p>第3章で作った Enemy グループのイベントを、次のように書きかえます。<br>
+        アクションや条件をダブルクリックすると、中身を直せます。</p>
+      <table>
+        <tr><th>場所</th><th>今まで</th><th>書きかえたあと</th></tr>
+        <tr><td>追いかけるフォースの Speed</td><td><code>100</code></td><td><code>min(220, 90 + Elapsed / 5)</code></td></tr>
+        <tr><td>"EnemyTimer" の Time in seconds</td><td><code>0.9</code></td><td><code>max(0.15, 0.9 - Elapsed / 60 * 0.06) * SpawnFactor</code></td></tr>
+        <tr><td>Goblin の Health の Value</td><td><code>1</code></td><td><code>1 + floor(Elapsed / 90)</code></td></tr>
+      </table>
+      <p>次に、ゴブリンを出すイベントを右クリック →「Add」→「Repeat」で、繰り返す回数を <code>1 + floor(Elapsed / 90)</code> にします。<br>
+        繰り返しは、ゴブリンを出すイベントの<strong>中</strong>（一段右）に入れます。<br>
+        そして、「Change the variable SpawnAngle」「Create object Goblin」「Change the scale of Goblin」「Change the variable Health of Goblin」の4つのアクションを、ドラッグして繰り返しの中に動かします。<br>
+        タイマーのリセットだけは、外に残します。</p>
       <figure class="figure">
-        <a href="img/ch5-05_key-h.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-05_key-h.jpg" alt="Key releasedの条件で、キーにhを選んだところ（赤枠）" loading="lazy"></a>
-        <figcaption>「Key released」で <code>h</code>（赤枠）</figcaption>
-      </figure>
-      <p>アクションは2つです。</p>
-      <ul>
-        <li>「Change variable value」で <code>Kills</code> を「- (subtract)」で <code>5</code></li>
-        <li>「Change variable value」で <code>PlayerHealth</code> を「= (set to)」で <code>100</code></li>
-      </ul>
-      <figure class="figure">
-        <a href="img/ch5-08_wave-shop-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-08_wave-shop-events.jpg" alt="ウェーブとショップのイベント（赤枠）" loading="lazy"></a>
-        <figcaption>ウェーブとショップのイベント（赤枠）</figcaption>
+        <a href="img/ch5-01_spawn-ramp.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-01_spawn-ramp.jpg" alt="Enemyグループで書きかえた4か所（赤枠）" loading="lazy"></a>
+        <figcaption>書きかえた4か所（赤枠）。<br>
+          タイマーのリセットは外、4つのアクションは「Repeat 1 + floor(Elapsed / 90) times:」の中</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">Key released と Key pressed</span> … 「Key pressed」は、キーを押している間ずっと動きます。<br>
-      ショップでそれを使うと、1回押しただけでドクロが何回も使われてしまいます。<br>
-      「Key released」は、キーをはなした1回だけ動くので、買い物にぴったりです。
+      <span class="word">式で「だんだん強く」</span> … どの式も、Elapsed（たった時間）が大きくなると数が変わります。
+      <ul>
+        <li><code>min(220, 90 + Elapsed / 5)</code> … 速さは 90 から始まって、5秒で1ずつ速くなる。<br>でも 220 より速くはならない</li>
+        <li><code>max(0.15, 0.9 - Elapsed / 60 * 0.06)</code> … 出てくる間隔は 0.9 秒から、1分ごとに 0.06 秒ずつ短くなる。<br>でも 0.15 秒より短くはならない</li>
+        <li><code>1 + floor(Elapsed / 90)</code> … 90秒（1分30秒）ごとに、1回に出てくる数と、ゴブリンの体力が1ずつふえる</li>
+        <li><code>* SpawnFactor</code> … 今は 1 なので変わらない。<br>ボスが出たら 3 にして、ゴブリンの出る間隔を3倍にのばす（ボスに集中できるように）</li>
+      </ul>
     </div>
 
-    <h2>5-5. ウェーブの数を画面に出そう</h2>
+    <h2>5-4. ボスを作ろう</h2>
     <div class="step">
-      <span class="step-num">7</span><span class="step-title">ウェーブの文字を出す</span>
-      <p>第4章で作った「条件のないイベント」（体力バーと KillText を変えるもの）に、アクションを足します。<br>
-        左の一覧で <code>WaveText</code> を選び、「Text」で下の式を入れます。</p>
-      <div class="code-block"><span class="code-label">WaveText に入れる式</span><button class="copy-btn" type="button">コピー</button><pre><code>"Wave " + ToString(Wave)</code></pre></div>
+      <span class="step-num">4</span><span class="step-title">Goblin を複製して Boss にする</span>
+      <p>「Game Scene」のタブで、一覧の <code>Goblin</code> の「⋮」→「Duplicate」を選び、名前を <code>Boss</code> に変えます。<br>
+        Boss をクリックして、左の Object Variables の <code>Health</code> を <code>150</code> に変えます。<br>
+        Boss もイベントで作り出すので、シーンには置きません。</p>
+      <p>シーン変数も2つ足します。</p>
+      <table>
+        <tr><th>名前</th><th>型</th><th>値</th><th>意味</th></tr>
+        <tr><td><code>BossTime</code></td><td>Number</td><td>900</td><td>ボスが出てくる時間（秒）。<br>900秒 ＝ 15分</td></tr>
+        <tr><td><code>BossSpawned</code></td><td>Boolean</td><td>False</td><td>ボスがもう出たかどうか</td></tr>
+      </table>
+    </div>
+
+    <div class="trouble">
+      <h4>⚠️ ためすときは BossTime を 60 にしよう</h4>
+      <p>ボスは15分たたないと出てきません。<br>
+      毎回15分待ってたしかめるのは大変です。<br>
+      作っているあいだは、BossTime の値を <code>60</code>（1分）にしておこう。<br>
+      うまく動いたら、<strong>最後に必ず 900 にもどして</strong>ね。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span><span class="step-title">ボスを1回だけ出す</span>
+      <p>「Game Scene (Events)」で、Gem &amp; level グループの下に新しいグループ <code>Boss</code> を作ります。<br>
+        その中に新しいイベントを作り、条件を2つ入れます。</p>
+      <ul>
+        <li>「Variable value」で <code>Elapsed</code> が「≥ (greater or equal to)」<code>BossTime</code></li>
+        <li>「Variable value」で <code>BossSpawned</code> が「False」</li>
+      </ul>
+      <p>アクションは6つです。</p>
+      <ul>
+        <li>「Change variable value」で <code>BossSpawned</code> を「True」に設定</li>
+        <li>「Change variable value」で <code>SpawnAngle</code> を「= (set to)」<code>RandomInRange(0, 359)</code></li>
+        <li>「Create an object」で <code>Boss</code> を、下の X・Y の式の場所に作る</li>
+        <li>「Scale」で <code>Boss</code> を <code>9</code>（ゴブリンの3倍）</li>
+        <li>「Tint color」で <code>Boss</code> を <code>"255;120;120"</code></li>
+        <li>「Change variable value」で <code>SpawnFactor</code> を「= (set to)」<code>3</code></li>
+      </ul>
+      <div class="code-block"><span class="code-label">X position</span><button class="copy-btn" type="button">コピー</button><pre><code>Player.CenterX() + XFromAngleAndDistance(SpawnAngle, 700)</code></pre></div>
+      <div class="code-block"><span class="code-label">Y position</span><button class="copy-btn" type="button">コピー</button><pre><code>Player.CenterY() + YFromAngleAndDistance(SpawnAngle, 700)</code></pre></div>
       <figure class="figure">
-        <a href="img/ch5-07_wave-text.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-07_wave-text.jpg" alt="WaveTextのTextアクションに式を入れたところ（赤枠）" loading="lazy"></a>
-        <figcaption>WaveText → Text → 式（赤枠）</figcaption>
+        <a href="img/ch5-02_boss-spawn.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-02_boss-spawn.jpg" alt="Bossグループの、ボスを出すイベント（赤枠）" loading="lazy"></a>
+        <figcaption>ボスを出すイベント（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">"Wave " + ToString(Wave)</span> … 「Wave 」という文字と、Wave の数を、＋でつなげた式。<br>
-      Wave が 3 なら「Wave 3」と表示されます。<br>
-      "Wave " のうしろのスペースを忘れると「Wave3」になります。
+      <span class="word">BossSpawned で1回だけ</span> … 「Elapsed ≥ BossTime」だけだと、15分をすぎてからずっと条件が当てはまり、ボスが何体も出てしまいます。<br>
+      出したらすぐ BossSpawned を True にすると、2回目からは「BossSpawned が False」の条件に当てはまらなくなります。<br>
+      こういう変数を「フラグ（旗）」と呼びます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">6</span><span class="step-title">ボスの動きと当たり判定</span>
+      <p>Boss グループに、ゴブリンと同じようなイベントを作ります。<br>
+        Enemy グループのイベントをコピーして、Goblin を Boss に直してもOKです。</p>
+      <table>
+        <tr><th>条件</th><th>アクション</th></tr>
+        <tr><td>（条件なし）</td><td>「Add a force to move toward an object」で <code>Boss</code> を <code>Player</code> へ <code>75</code>、Instant<br>「Animation (by name)」で <code>Boss</code> を Run</td></tr>
+        <tr><td>Boss の X position &gt; <code>Player.X()</code></td><td>「Flip the object horizontally」で <code>Boss</code> を Yes</td></tr>
+        <tr><td>Boss の X position ≤ <code>Player.X()</code></td><td>「Flip the object horizontally」で <code>Boss</code> を No</td></tr>
+        <tr><td>「Collision」<code>Knife</code> と <code>Boss</code></td><td>「Delete the object」で <code>Knife</code><br><code>Boss</code> の Health を「- (subtract)」<code>KnifeDamage</code></td></tr>
+        <tr><td>「Collision」<code>Boss</code> と <code>Player</code></td><td><code>PlayerHealth</code> を「- (subtract)」<code>40 * TimeDelta()</code></td></tr>
+        <tr><td>「Object variable value」<code>Boss</code> の Health ≤ <code>0</code></td><td>「Change the scene」で <code>"Clear"</code></td></tr>
+      </table>
+      <figure class="figure">
+        <a href="img/ch5-03_boss-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-03_boss-events.jpg" alt="Bossグループの、動き・向き・当たり判定・クリアのイベント（赤枠）" loading="lazy"></a>
+        <figcaption>Boss グループのイベント（赤枠）。<br>
+          写真は完成したときのものです。<br>
+          いちばん下のイベントの LastTime・LastLevel の2行は第6章で足すので、今は「Change to scene "Clear"」だけでOK</figcaption>
+      </figure>
+    </div>
+
+    <div class="trouble">
+      <h4>⚠️ Clear のシーンを先に作っておこう</h4>
+      <p>「Change the scene」の一覧に、まだ Clear はありません。<br>
+      左上の「≡」でプロジェクトマネージャーを開き、「Scenes」の「＋」を押して、名前が <code>Clear</code> のシーンを作っておこう。<br>
+      中身は第6章で作るので、今はからっぽのままでOK。<br>
+      今の時点でボスをたおすと、何もない画面に切りかわれば正しく動いています。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">7</span><span class="step-title">ボスが出たら、ボスの体力を表示する</span>
+      <p>UI グループで、時間を出すイベントの<strong>下</strong>に新しいイベントを作ります。<br>
+        条件は「Variable value」で <code>BossSpawned</code> が「True」。<br>
+        アクションは <code>TimeText</code> の「Text」で「= (set to)」、Value は下の式。</p>
+      <div class="code-block"><span class="code-label">TimeText の Text</span><button class="copy-btn" type="button">コピー</button><pre><code>"ボスをたおせ！ HP " + ToString(max(0, ceil(Boss.Variable(Health))))</code></pre></div>
+      <p>イベントは上から順番に動くので、上で「○分○秒」を入れたあと、ボスがいるときだけ下でボスの HP に上書きされます。</p>
+    </div>
+
+    <div class="term">
+      <span class="word">Boss.Variable(Health)</span> … Boss のオブジェクト変数 Health の値を取り出す式。<br>
+      ceil() は小数を切り上げる式、max(0, …) はマイナスにならないようにする式です。
     </div>
 
     <div class="step">
       <span class="step-num">8</span><span class="step-title">保存して Preview</span>
-      <p>15秒ごとに左上の「Wave」がふえて、ゴブリンがどんどん早く出てきます。<br>
-        ドクロが5こ以上たまったら、<code>H</code> キーを押してみよう。<br>
-        ドクロが5へって、体力バーがいっぱいにもどります。</p>
+      <p>BossTime を 60 にしてためします。<br>
+        画面の上で時間がふえていき、時間がたつほどゴブリンがふえて速くなります。<br>
+        1分たつと、大きな赤っぽいボスが出てきて、上の文字が「ボスをたおせ！ HP 150」に変われば成功！<br>
+        ナイフを当てると HP がへっていきます。</p>
       <figure class="figure">
-        <a href="img/ch5-09_preview.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-09_preview.jpg" alt="PreviewでWave 2、ドクロ7、右上にショップの文字（赤枠）" loading="lazy"></a>
-        <figcaption>ウェーブとショップ（赤枠）</figcaption>
+        <a href="img/ch5-04_preview-boss.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-04_preview-boss.jpg" alt="Previewで、大きなボス（赤枠）と、ボスをたおせ！ HP 150 の文字（赤枠）" loading="lazy"></a>
+        <figcaption>ボス（赤枠）と、上の「ボスをたおせ！ HP 150」（赤枠）</figcaption>
       </figure>
+      <p>たしかめ終わったら、BossTime を <strong>900</strong> にもどしておこう。</p>
     </div>
 
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ショップの商品をふやしてみよう。<br>
-        たとえば「<code>J</code> キー：ドクロ3こで、ナイフが速くなる」など。</p>
+      <p>ボスの体力（150）や速さ（75）、大きさ（9）を変えて、自分の好きな強さのボスにしてみよう。<br>
+        ボスの見た目を「Swap assets」で別のキャラにするのもおもしろいよ。</p>
       <details class="hint">
         <summary>ヒント</summary>
-        <p>シーン変数 <code>KnifeSpeed</code>（値は 600）を作り、第1章のナイフの Speed を <code>KnifeSpeed</code> にします。<br>
-          J キーのイベントで、Kills を 3 へらして、KnifeSpeed に 200 足せばOK。<br>
-          ShopText にも、新しい商品の説明を書き足そう。</p>
+        <p>体力は Boss のオブジェクト変数、速さは Boss グループの「Add a force to move toward an object」、大きさは「Scale」です。<br>
+          Dungeon パックには、オークや大きな悪魔など、ボスに向いたキャラもいます。</p>
       </details>
     </div>
 
-    <h2>5-6. 🚨 つまずきポイント集</h2>
+    <h2>5-5. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
-      <h4>Wave がふえない</h4>
-      <p><strong>原因:</strong> "WaveTimer" をスタートするイベントがない、または名前がちがう。</p>
-      <p><strong>直し方:</strong> 「At the beginning of the scene」で <code>"WaveTimer"</code> をスタートしているか確かめよう。</p>
+      <h4>時間がふえない</h4>
+      <p><strong>原因:</strong> Elapsed をふやすイベントに条件が入っている、または「At the beginning of the scene」の中に入れてしまった。</p>
+      <p><strong>直し方:</strong> 条件のないイベントで、<code>Elapsed</code> に <code>TimeDelta()</code> を加算しているか確かめよう。</p>
     </div>
 
     <div class="trouble">
-      <h4>H キーを押しても何も起きない</h4>
-      <p><strong>原因:</strong> ドクロが5こたまっていない、または先にゲーム画面をクリックしていない。</p>
-      <p><strong>直し方:</strong> ゲームの画面を1回クリックしてから、ドクロが5こ以上のときに押そう。</p>
+      <h4>ボスがたくさん出てくる</h4>
+      <p><strong>原因:</strong> 「BossSpawned が False」の条件がない、または BossSpawned を True にするアクションがない。</p>
+      <p><strong>直し方:</strong> 条件と、最初のアクション「BossSpawned を True に設定」を確かめよう。</p>
     </div>
 
     <div class="trouble">
-      <h4>ゴブリンが出すぎてすぐ負ける</h4>
-      <p><strong>原因:</strong> ウェーブがどんどん進んで、0.2秒ごとなどになっている。</p>
-      <p><strong>直し方:</strong> ウェーブの間かく（15秒）を長くするか、<code>2 / Wave</code> を <code>3 / Wave</code> にしてみよう。</p>
+      <h4>ボスが出てこない</h4>
+      <p><strong>原因:</strong> BossTime が 900 のまま（15分待つ必要がある）、または Elapsed がふえていない。</p>
+      <p><strong>直し方:</strong> ためすときは BossTime を 60 にしよう。<br>
+        上の時間の表示がふえているかも確かめよう。</p>
     </div>
 
-    <h2>5-7. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>ボスの HP が出ない（時間のままになる）</h4>
+      <p><strong>原因:</strong> ボスの HP を出すイベントが、時間を出すイベントより上にある。</p>
+      <p><strong>直し方:</strong> 「BossSpawned が True」のイベントを、時間を出すイベントの下にドラッグしよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>ゴブリンが急にたくさん出すぎる・まったく出なくなった</h4>
+      <p><strong>原因:</strong> タイマーのリセットまで繰り返しの中に入れてしまった、または式の写しまちがい。</p>
+      <p><strong>直し方:</strong> 「Start (or reset) the timer "EnemyTimer"」は繰り返しの外にあるか確かめて、式はコピーボタンで写しなおそう。</p>
+    </div>
+
+    <h2>5-6. ✅ チェックリスト</h2>
     <div class="checklist">
-      <label><input type="checkbox"> Wave のシーン変数を作った</label>
-      <label><input type="checkbox"> 15秒ごとに Wave がふえる</label>
-      <label><input type="checkbox"> ウェーブが進むとゴブリンが早く出てくる</label>
-      <label><input type="checkbox"> WaveText に今のウェーブが出る</label>
-      <label><input type="checkbox"> H キーでドクロ5こと引きかえに回復できる</label>
+      <label><input type="checkbox"> 画面の上に「○分○秒」が出て、時間がふえていく</label>
+      <label><input type="checkbox"> レベルアップ中は時間が止まる</label>
+      <label><input type="checkbox"> 時間がたつほど、ゴブリンが多く・速く・かたくなる</label>
+      <label><input type="checkbox"> BossTime をすぎると、ボスが1体だけ出てくる</label>
+      <label><input type="checkbox"> ボスの HP が上に出て、ナイフでへっていく</label>
+      <label><input type="checkbox"> ためしたあと、BossTime を 900 にもどした</label>
     </div>
     <p>全部チェックできたら第5章クリア！<br>
-      🎉 次回は最終回！<br>
-      音や色で仕上げて、みんなに発表しよう。</p>
+      🎉 次回は、タイトルやゲームオーバーの画面を作って、ゲームを仕上げるよ。</p>
 
     <nav class="chapter-nav">
-      <a href="chapter4.html">← 第4章 画面に情報を出そう</a>
+      <a href="chapter4.html">← 第4章 ジェムを集めてレベルアップ</a>
       <a href="chapter6.html">第6章 仕上げて発表しよう →</a>
     </nav>
   </main>

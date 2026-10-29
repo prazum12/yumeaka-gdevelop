@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第4章 画面に情報を出そう | 夢アカGDevelop教科書（ローグライク編）</title>
+  <title>第4章 ジェムを集めてレベルアップ | 夢アカGDevelop教科書（ローグライク編）</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <main class="container">
     <div class="chapter-title">
       <span class="chapter-num">第4章</span>
-      <h1>画面に情報を出そう</h1>
+      <h1>ジェムを集めてレベルアップ</h1>
       <div class="date">📅 第4回の講習で使います（日付が決まったらここに記載）</div>
     </div>
 
@@ -30,10 +30,10 @@
     <div class="goal-box">
       <h2>🎯 この章でできるようになること</h2>
       <ul>
-        <li>UI レイヤーで、画面に情報を出しつづけられる</li>
-        <li>シーン変数で、体力や倒した数を数えられる</li>
-        <li>変数の値に合わせて、バーの長さや文字を変えられる</li>
-        <li>ゲームオーバーで最初からやりなおせる</li>
+        <li>たおした敵の場所にジェムを落とし、近づくと吸いよせて拾える</li>
+        <li>配列の変数に、文字をいくつもまとめて入れられる</li>
+        <li>タイムスケールで、ゲームの時間を止めたり動かしたりできる</li>
+        <li>「If one of these conditions is true」で、キーでもクリックでも選べるようにできる</li>
       </ul>
     </div>
 
@@ -41,233 +41,379 @@
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンの体力が0以下（第2章のイベント）</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンを消す<br><strong>倒した数を1ふやす</strong>（追加）</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>（ゴブリン1体ずつ）体力が0以下</div>
+        <div class="ev-act"><span class="ev-head">アクション</span><strong>その場所にジェムを落とす</strong>（追加）</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンがプレイヤーにさわっている</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>プレイヤーの体力をへらす</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>ジェムが騎士の近くにある ／ ジェムが騎士にさわった</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>騎士へ吸いよせる ／ ジェムを消して XP を1ふやす</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>（いつも）</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>体力バーの長さを体力に合わせる<br>倒した数の文字を変える</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>XP が XPNext 以上</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>レベルを1上げる。<br>時間を止めて、強化の候補を3つ出す</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>プレイヤーの体力が0以下</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>シーンを最初からやりなおす（ゲームオーバー）</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>1・2・3キーか、文字のクリック</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>えらんだ強化を Chosen に入れる</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>Chosen が決まった</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>時間を動かして、えらんだ強化を反映する</div>
       </div>
     </div>
 
-    <h2>4-2. 変数とUIレイヤーを用意しよう</h2>
+    <h2>4-2. ジェムを落とそう</h2>
     <div class="step">
-      <span class="step-num">1</span><span class="step-title">シーン変数を2つ作る</span>
-      <p>「Game Scene」のタブで、ステージの外の何もないところをクリックします。<br>
-        左の「<strong>Scene Variables</strong>」の右の、四角から矢印が出たマークを押します。<br>
-        「Add variable」で次の2つを作り、「Apply」を押します。</p>
+      <span class="step-num">1</span><span class="step-title">ジェムを追加する</span>
+      <p>「Game Scene」のタブで、「Objects」の「＋」からアセットストアを開きます。<br>
+        検索欄に <code>gem</code> と入れて、「<strong>Blue Gem</strong>」（作者: Kenney）を選んで追加します。<br>
+        オブジェクト名は <code>Blue_Gem</code> になります。<br>
+        ジェムもイベントで作り出すので、シーンには置かなくてOK。</p>
+      <figure class="figure">
+        <a href="img/ch4-01_gem-asset.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-01_gem-asset.jpg" alt="アセットストアでgemと検索（赤枠）。右上のBlue Gem（赤枠）" loading="lazy"></a>
+        <figcaption><code>gem</code> で検索して、右上の「Blue Gem」（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">たおしたゴブリンの場所にジェムを作る</span>
+      <p>「Game Scene (Events)」の Enemy グループで、第3章で作った「Repeat for each instance of Goblin」のイベントにアクションを2つ足します。</p>
       <ul>
-        <li><code>PlayerHealth</code>（プレイヤーの体力）… Number、値は <code>100</code></li>
-        <li><code>Kills</code>（倒した数）… Number、値は <code>0</code></li>
+        <li>「Create an object」で <code>Blue_Gem</code> を X <code>Goblin.CenterX()</code>、Y <code>Goblin.CenterY()</code> に作る</li>
+        <li>「Scale」で <code>Blue_Gem</code> を <code>1.2</code></li>
       </ul>
+      <p>足した2つは、ドラッグして「Delete Goblin」より<strong>上</strong>に動かします。<br>
+        先にゴブリンを消してしまうと、ゴブリンの場所がわからなくなるからです。</p>
       <figure class="figure">
-        <a href="img/ch4-01_scene-vars.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-01_scene-vars.jpg" alt="Game Scene variablesにPlayerHealth 100とKills 0（赤枠）" loading="lazy"></a>
-        <figcaption>PlayerHealth = 100、Kills = 0（赤枠）</figcaption>
+        <a href="img/ch3-03_foreach.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch3-03_foreach.jpg" alt="Repeat for each instance of Goblin。Blue_Gemを作る、Scale 1.2、Goblinを削除、Kills加算（赤枠）" loading="lazy"></a>
+        <figcaption>Blue_Gem の2行が、「Delete Goblin」より上にある（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">シーン変数を足す</span>
+      <p>「Game Scene variables」の画面を開き、次の変数を足して「Apply」を押します。</p>
+      <table>
+        <tr><th>名前</th><th>型</th><th>値</th><th>意味</th></tr>
+        <tr><td><code>XP</code></td><td>Number</td><td>0</td><td>集めたジェム（経験値）</td></tr>
+        <tr><td><code>XPNext</code></td><td>Number</td><td>8</td><td>次のレベルまでに必要な XP</td></tr>
+        <tr><td><code>Level</code></td><td>Number</td><td>1</td><td>今のレベル</td></tr>
+        <tr><td><code>MagnetRange</code></td><td>Number</td><td>150</td><td>ジェムを吸いよせる距離</td></tr>
+        <tr><td><code>PlayerSpeed</code></td><td>Number</td><td>300</td><td>騎士の速さ</td></tr>
+        <tr><td><code>Opt1</code>・<code>Opt2</code>・<code>Opt3</code></td><td>Number</td><td>1・2・3</td><td>画面に出す強化の番号</td></tr>
+        <tr><td><code>OptD</code></td><td>Number</td><td>1</td><td>強化の番号をえらぶための計算用</td></tr>
+        <tr><td><code>Chosen</code></td><td>Number</td><td>0</td><td>えらんだ強化の番号（0 はまだえらんでいない）</td></tr>
+        <tr><td><code>UpgradeNames</code></td><td><strong>Array</strong></td><td>（下の6つ）</td><td>強化の名前の一覧</td></tr>
+      </table>
+      <p><code>UpgradeNames</code> は、型を「<strong>Array</strong>」にします。<br>
+        行の右の「＋」を6回押すと、0〜5 の番号の「子」ができます。<br>
+        子の型をそれぞれ「<strong>Text</strong>」にして、次の文字を入れます。</p>
+      <table>
+        <tr><th>番号</th><th>テキスト</th></tr>
+        <tr><td>0</td><td>ナイフの威力アップ</td></tr>
+        <tr><td>1</td><td>攻撃のスピードアップ</td></tr>
+        <tr><td>2</td><td>ナイフを1本ふやす</td></tr>
+        <tr><td>3</td><td>足がはやくなる</td></tr>
+        <tr><td>4</td><td>最大HPアップ＆全回復</td></tr>
+        <tr><td>5</td><td>ナイフを投げる方向がふえる</td></tr>
+      </table>
+      <figure class="figure">
+        <a href="img/ch4-02_upgrade-names.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-02_upgrade-names.jpg" alt="UpgradeNames（Array、6 children）と、0〜5のText（赤枠）" loading="lazy"></a>
+        <figcaption>UpgradeNames は Array で、6 children（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">シーン変数</span> … ゲーム全体で1つだけの変数。<br>
-      第2章のゴブリンの Health（オブジェクト変数）は1体ずつ別々でしたが、プレイヤーの体力や倒した数は1つあればいいのでシーン変数にします。
+      <span class="word">配列（はいれつ）</span> … 1つの変数の中に、番号つきで値をいくつも入れられる変数。<br>
+      番号は <strong>0 から</strong>始まります。<br>
+      <code>UpgradeNames[2]</code> と書くと、2番の「ナイフを1本ふやす」が取り出せます。
     </div>
 
+    <h2>4-3. ジェムを拾おう</h2>
     <div class="step">
-      <span class="step-num">2</span><span class="step-title">UIレイヤーを作る</span>
-      <p>右上のレイヤーのマーク（紙が重なったマーク）を押すと、右下に「Layers」が出ます。<br>
-        「＋」を押して新しいレイヤーを作り、名前を <code>UI</code> にして <code>Enter</code>。<br>
-        <code>UI</code> の右の丸いボタンを押して、これから置くものが UI レイヤーに入るようにします。</p>
+      <span class="step-num">4</span><span class="step-title">Gem &amp; level グループを作る</span>
+      <p>Enemy グループの下に、新しいグループ <code>Gem &amp; level</code> を作ります。<br>
+        その中に、イベントを2つ作ります。</p>
+      <p><strong>1つ目（吸いよせる）</strong><br>
+        条件は、左の一覧で <code>Blue_Gem</code> を選び、「Distance between two objects」、Object 2 は <code>Player</code>、Distance は <code>MagnetRange</code>（こんどは反転しない）。<br>
+        アクションは「Add a force to move toward an object」で <code>Blue_Gem</code> を <code>Player</code> へ、Speed <code>450</code>、「Instant」。</p>
+      <p><strong>2つ目（拾う）</strong><br>
+        右クリック →「Add」→「For each object」で、Object は <code>Blue_Gem</code>。<br>
+        条件は「Collision」で <code>Blue_Gem</code> と <code>Player</code>。<br>
+        アクションは「Delete the object」で <code>Blue_Gem</code>、「Change variable value」で <code>XP</code> を「+ (add)」<code>1</code>。</p>
       <figure class="figure">
-        <a href="img/ch4-02_ui-layer.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-02_ui-layer.jpg" alt="LayersにUIレイヤーを作り、丸いボタンを選んだところ（赤枠）" loading="lazy"></a>
-        <figcaption>UI レイヤーを作って選ぶ（赤枠）</figcaption>
+        <a href="img/ch4-03b_magnet-pickup.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-03b_magnet-pickup.jpg" alt="Gem &amp; levelグループの、吸いよせるイベントと拾うイベント（赤枠）" loading="lazy"></a>
+        <figcaption>吸いよせる・拾うイベント（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">レイヤー</span> … 透明なシートを重ねるように、絵を重ねるしくみ。<br>
-      UI レイヤーはカメラが動いても画面の同じ場所にとどまるので、体力バーや点数を出すのにぴったりです。
+      <span class="word">MagnetRange（マグネットの範囲）</span> … 騎士から 150 より近いジェムは、騎士のほうへ飛んできます。<br>
+      ジェムを1つずつ拾うので、ここでも「For each object」を使います。<br>
+      いっぺんに2つさわっても、XP がちゃんと2ふえます。
     </div>
 
-    <h2>4-3. 体力バーとドクロを置こう</h2>
+    <h2>4-4. XP バーとレベルを出そう</h2>
     <div class="step">
-      <span class="step-num">3</span><span class="step-title">体力バーを追加する</span>
-      <p>「＋」からアセットストアを開き、<code>health bar</code> で検索します。<br>
-        「<strong>Health Bar Fill</strong>」（作者: Pixel-boy、CC0）を選んで「Add to the scene」。<br>
-        これは「Tiled Sprite」（タイル状にくり返す画像）なので、横の長さを自由に変えられます。</p>
-      <figure class="figure">
-        <a href="img/ch4-03_healthbar-asset.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-03_healthbar-asset.jpg" alt="アセットストアのHealth Bar Fill（赤枠）とAdd to the scene（赤枠）" loading="lazy"></a>
-        <figcaption>「Health Bar Fill」を追加（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">4</span><span class="step-title">ドクロを追加する</span>
-      <p>次に <code>skull</code> で検索して、「<strong>Skull</strong>」（作者: Alex's Assets、CC0）を追加します。<br>
-        倒した数のマークに使います。</p>
-      <figure class="figure">
-        <a href="img/ch4-04_skull-asset.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-04_skull-asset.jpg" alt="アセットストアのSkull（赤枠）" loading="lazy"></a>
-        <figcaption>「Skull」を追加（赤枠）</figcaption>
-      </figure>
+      <span class="step-num">5</span><span class="step-title">XP バーとレベルの文字を置く</span>
+      <p>「Game Scene」のタブで、一覧の <code>Health_Bar_Fill</code> の「⋮」→「<strong>Duplicate</strong>」を選びます。<br>
+        できたオブジェクトの「⋮」→「<strong>Rename</strong>」で、名前を <code>XP_Bar_Fill</code> にします。<br>
+        レイヤーの <code>UI</code> の丸いボタンを押してから、XP_Bar_Fill をステージに置き、X <code>0</code>、Y <code>0</code>、W <code>1280</code>、H <code>10</code> にします。<br>
+        画面のいちばん上の、うすいバーになります。</p>
+      <p>次に、「＋」→「New object from scratch」→「Text」で <code>LevelText</code> を作ります。<br>
+        Initial text to display は <code>Lv 1</code>。<br>
+        サイズや色は KillText と同じくらいで、好きな色（写真では水色）にしてOK。<br>
+        UI レイヤーの、体力バーの右（X <code>240</code>、Y <code>16</code> くらい）に置きます。</p>
     </div>
 
     <div class="step">
-      <span class="step-num">5</span><span class="step-title">倒した数の文字を作る</span>
-      <p>「＋」→「<strong>New object from scratch</strong>」→ <code>text</code> で検索 →「<strong>Text</strong>」を選びます。<br>
-        Object name を <code>KillText</code>、Size を <code>36</code>、「Bold」（太字）にチェック。<br>
-        Initial text（最初の文字）は <code>0</code>。<br>
-        「Outline」の Enabled にチェックして、Thickness（ふちの太さ）を <code>4</code> にして「Apply」。</p>
-      <figure class="figure">
-        <a href="img/ch4-05_killtext.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-05_killtext.jpg" alt="Edit KillTextの画面。名前、大きさ、太字、文字、ふち（赤枠）" loading="lazy"></a>
-        <figcaption>KillText の設定（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">6</span><span class="step-title">画面の左上にならべる</span>
-      <p>3つを画面に置いて、左の数字で位置と大きさを決めます。<br>
-        置いたものをクリックすると、左に X・Y・W（幅）・H（高さ）が出ます。</p>
+      <span class="step-num">6</span><span class="step-title">UI グループで、バーと文字を動かす</span>
+      <p>「Game Scene (Events)」の UI グループで、条件のないイベントにアクションを2つ足します。</p>
       <ul>
-        <li><code>Health_Bar_Fill</code> … X <code>20</code>、Y <code>20</code>、W <code>200</code>、H <code>24</code>（W と H の右の鎖のマークを押して、たて横の比率を自由にしてから入れる）</li>
-        <li><code>Skull</code> … X <code>20</code>、Y <code>56</code>、W <code>40</code></li>
-        <li><code>KillText</code> … X <code>70</code>、Y <code>52</code></li>
+        <li>「Width」で <code>XP_Bar_Fill</code> を「= (set to)」<code>XP / XPNext * 1280</code></li>
+        <li><code>LevelText</code> の「Text」で「= (set to)」<code>"Lv " + ToString(Level)</code></li>
       </ul>
-      <figure class="figure">
-        <a href="img/ch4-06_healthbar-place.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-06_healthbar-place.jpg" alt="Health_Bar_FillのX 20、Y 20、W 200、H 24（赤枠）" loading="lazy"></a>
-        <figcaption>体力バーの位置と大きさ（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch4-07_ui-placed.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-07_ui-placed.jpg" alt="画面の左上に体力バー、ドクロ、0の文字がならんだところ（赤枠）" loading="lazy"></a>
-        <figcaption>左上にならんだ（赤枠）</figcaption>
-      </figure>
-      <p>置き終わったら、Layers の「<strong>Base layer</strong>」の丸いボタンを押して、もとにもどしておこう。<br>
-        もどさないと、このあと置く壁やゴブリンも UI レイヤーに入ってしまいます。</p>
-    </div>
-
-    <h2>4-4. ダメージとゲームオーバーを作ろう</h2>
-    <div class="step">
-      <span class="step-num">7</span><span class="step-title">倒した数をふやす</span>
-      <p>イベントシートの Enemy グループで、「Health of Goblin ≤ 0」のイベントにアクションを足します。<br>
-        <code>change variable value</code> で検索 →「<strong>Change variable value</strong>」、Variable は <code>Kills</code>、Sign は「<strong>+ (add)</strong>」（足す）、Value は <code>1</code>。</p>
-      <figure class="figure">
-        <a href="img/ch4-08_kills-add.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-08_kills-add.jpg" alt="Change variable value。Killsに1を足す（赤枠）" loading="lazy"></a>
-        <figcaption>Kills に 1 を足す（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">8</span><span class="step-title">ゴブリンにさわると体力がへる</span>
-      <p>いちばん下に新しいイベントを作ります。<br>
-        条件は「Collision」で <code>Goblin</code> と <code>Player</code>。<br>
-        アクションは「Change variable value」で <code>PlayerHealth</code> を「<strong>- (subtract)</strong>」、Value は下の式。</p>
-      <div class="code-block"><span class="code-label">Value</span><button class="copy-btn" type="button">コピー</button><pre><code>20 * TimeDelta()</code></pre></div>
-      <figure class="figure">
-        <a href="img/ch4-09_damage.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-09_damage.jpg" alt="Change variable value。PlayerHealthから20 * TimeDelta()を引く（赤枠）" loading="lazy"></a>
-        <figcaption>1秒に20ずつへる（赤枠）</figcaption>
-      </figure>
+      <p>Start グループの「At the beginning of the scene」には、「Tint color」で <code>XP_Bar_Fill</code> を <code>"80;200;255"</code>（水色）を足します。<br>
+        Health_Bar_Fill を複製したので、そのままだと赤いバーだからです。</p>
     </div>
 
     <div class="term">
-      <span class="word">TimeDelta()</span> … 前の画面から今の画面まで、何秒たったかを教えてくれる式（だいたい 0.016 秒）。<br>
-      20 × TimeDelta() を毎回引くと、ちょうど「1秒で20へる」になります。<br>
-      PCの速さがちがっても、へる速さは同じになります。
+      <span class="word">XP / XPNext * 1280</span> … 体力バーと同じ考え方です。<br>
+      「次のレベルまで何わり集まったか」に、画面の横はば 1280 をかけています。<br>
+      ジェムを集めるほど、バーが右へのびていきます。<br>
+      <code>"Lv " + ToString(Level)</code> は、「Lv 」という文字と、レベルの数をつなげて「Lv 2」のようにします。
+    </div>
+
+    <h2>4-5. レベルアップの画面を作ろう</h2>
+    <div class="step">
+      <span class="step-num">7</span><span class="step-title">パネルと文字を置く</span>
+      <p>もう一度 <code>Health_Bar_Fill</code> を「Duplicate」して、名前を <code>Panel</code> にします。<br>
+        UI レイヤーに置いて、X <code>0</code>、Y <code>0</code>、W <code>1280</code>、H <code>720</code>（画面全体）にします。<br>
+        エディタでは赤いしましまですが、ゲームが始まったら黒くて半分すけたパネルにします。</p>
+      <p>「Text」で、次の4つを作って UI レイヤーのパネルの上に置きます。</p>
+      <table>
+        <tr><th>名前</th><th>Initial text to display</th><th>置く場所（だいたいでOK）</th></tr>
+        <tr><td><code>LevelUpText</code></td><td>レベルアップ！ 強化を1つえらぼう（1・2・3キー または クリック）</td><td>上のほう、まん中（黄色が見やすい）</td></tr>
+        <tr><td><code>Option1Text</code></td><td>1：</td><td>X <code>300</code>、Y <code>290</code></td></tr>
+        <tr><td><code>Option2Text</code></td><td>2：</td><td>X <code>300</code>、Y <code>370</code></td></tr>
+        <tr><td><code>Option3Text</code></td><td>3：</td><td>X <code>300</code>、Y <code>450</code></td></tr>
+      </table>
+      <p>Option1Text〜3 の文字は、あとでイベントで「1：ナイフを1本ふやす」のように書きかえます。<br>
+        文字がパネルにかくれてしまうときは、Panel をクリックして Z を <code>0</code> に、文字の Z を <code>100</code> にしよう（Z が大きいほど手前に出ます）。<br>
+        置き終わったら、Base layer の丸いボタンを押してもどしておこう。</p>
+      <figure class="figure">
+        <a href="img/ch4-03_levelup-layout.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-03_levelup-layout.jpg" alt="UIレイヤー（赤枠）に、画面全体のPanelと、レベルアップの文字と1：2：3：を置いたところ（赤枠）" loading="lazy"></a>
+        <figcaption>UI レイヤー（赤枠）に Panel と文字を置いたところ（赤枠）</figcaption>
+      </figure>
     </div>
 
     <div class="step">
-      <span class="step-num">9</span><span class="step-title">体力バーと文字を変える</span>
-      <p>条件のないイベントを作り、アクションを2つ入れます。</p>
+      <span class="step-num">8</span><span class="step-title">ゲームが始まったら、パネルをかくす</span>
+      <p>Start グループの「At the beginning of the scene」に、アクションを足します。</p>
       <ul>
-        <li><code>width</code> で検索 →「<strong>Width</strong>」、<code>Health_Bar_Fill</code> を <code>PlayerHealth * 2</code>（体力100なら幅200）</li>
-        <li>左の一覧で <code>KillText</code> を選び、いちばん上の「<strong>Text</strong>」で <code>ToString(Kills)</code></li>
+        <li><code>hide</code> で検索 →「<strong>Hide</strong>」で <code>Panel</code>、<code>LevelUpText</code>、<code>Option1Text</code>、<code>Option2Text</code>、<code>Option3Text</code>（5つ）</li>
+        <li>「Tint color」で <code>Panel</code> を <code>"0;0;0"</code>（黒）</li>
+        <li><code>opacity</code> で検索 →「<strong>Opacity</strong>」で <code>Panel</code> を「= (set to)」<code>170</code>（0 で透明、255 で不透明）</li>
       </ul>
+    </div>
+
+    <h2>4-6. レベルアップのしくみを作ろう</h2>
+    <div class="step">
+      <span class="step-num">9</span><span class="step-title">XP がたまったらレベルアップ</span>
+      <p>Gem &amp; level グループに新しいイベントを作ります。<br>
+        条件は2つです。</p>
+      <ul>
+        <li>「Variable value」で <code>XP</code> が「≥ (greater or equal to)」<code>XPNext</code></li>
+        <li>「Variable value」で <code>LevelingUp</code> が「False」</li>
+      </ul>
+      <p>アクションは、上から順番に次のとおりです。</p>
+      <table>
+        <tr><th>アクション</th><th>中身</th></tr>
+        <tr><td>Change variable value</td><td><code>XP</code> を「- (subtract)」<code>XPNext</code></td></tr>
+        <tr><td>Change variable value</td><td><code>Level</code> を「+ (add)」<code>1</code></td></tr>
+        <tr><td>Change variable value</td><td><code>XPNext</code> を「= (set to)」<code>round(8 + Level * 6 + Level * Level * 0.5)</code></td></tr>
+        <tr><td>Change variable value</td><td><code>LevelingUp</code> を「<strong>True</strong>」に設定</td></tr>
+        <tr><td><code>time scale</code> で検索 →「Time scale」</td><td><code>0</code></td></tr>
+        <tr><td>Change variable value</td><td><code>Opt1</code> を「= (set to)」<code>RandomInRange(1, 6)</code></td></tr>
+        <tr><td>Change variable value</td><td><code>OptD</code> を「= (set to)」<code>RandomInRange(1, 5)</code></td></tr>
+        <tr><td>Change variable value</td><td><code>Opt2</code> を「= (set to)」下の式</td></tr>
+        <tr><td>Change variable value</td><td><code>Opt3</code> を「= (set to)」下の式</td></tr>
+        <tr><td>Text</td><td><code>Option1Text</code> を「= (set to)」<code>"1：" + UpgradeNames[Opt1 - 1]</code></td></tr>
+        <tr><td>Text</td><td><code>Option2Text</code> を「= (set to)」<code>"2：" + UpgradeNames[Opt2 - 1]</code></td></tr>
+        <tr><td>Text</td><td><code>Option3Text</code> を「= (set to)」<code>"3：" + UpgradeNames[Opt3 - 1]</code></td></tr>
+        <tr><td><code>show</code> で検索 →「Show」</td><td><code>LevelUpText</code>、<code>Option1Text</code>、<code>Option2Text</code>、<code>Option3Text</code>、<code>Panel</code>（5つ）</td></tr>
+      </table>
+      <div class="code-block"><span class="code-label">Opt2 の Value（おまじない）</span><button class="copy-btn" type="button">コピー</button><pre><code>mod(Opt1 - 1 + OptD, 6) + 1</code></pre></div>
+      <div class="code-block"><span class="code-label">Opt3 の Value（おまじない）</span><button class="copy-btn" type="button">コピー</button><pre><code>mod(Opt1 - 1 + mod(OptD - 1 + RandomInRange(1, 4), 5) + 1, 6) + 1</code></pre></div>
       <figure class="figure">
-        <a href="img/ch4-10_bar-width.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-10_bar-width.jpg" alt="WidthのアクションでHealth_Bar_FillをPlayerHealth * 2（赤枠）" loading="lazy"></a>
-        <figcaption>体力バーの幅 = 体力 × 2（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch4-11_kill-text.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-11_kill-text.jpg" alt="KillTextのTextアクションにToString(Kills)（赤枠）" loading="lazy"></a>
-        <figcaption>KillText → Text → <code>ToString(Kills)</code>（赤枠）</figcaption>
+        <a href="img/ch4-04_levelup-event.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-04_levelup-event.jpg" alt="XP ≥ XPNext、LevelingUp is false のイベントと、そのアクション（赤枠）" loading="lazy"></a>
+        <figcaption>レベルアップのイベント（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">ToString()</span> … 数を文字に変える式。<br>
-      Kills は数なので、文字のオブジェクトに出すときは ToString で文字にします。
+      <span class="word">タイムスケール 0 ＝ 時間を止める</span> … タイムスケールは、ゲームの時間の進む速さです。<br>
+      1 がふつう、0 にすると時間が止まります。<br>
+      ゴブリンもナイフもタイマーも止まるので、ゆっくり強化をえらべます。<br>
+      LevelingUp を True にしておくのは、「今はレベルアップ中」という目じるしです。<br>
+      ナイフやゴブリンを出すイベントに「LevelingUp が False」の条件を入れておいたのは、このためです。
+    </div>
+
+    <div class="term">
+      <span class="word">Opt1〜Opt3 の式（おまじない）</span> … 1〜6 の中から、<strong>3つともちがう番号</strong>をえらぶための式です。<br>
+      Opt1 はふつうにランダム。<br>
+      Opt2 は、Opt1 から OptD（1〜5）だけずらした番号です。<br>
+      mod(…, 6) は「6 で割ったあまり」で、6 をこえたら 1 にもどって数えるはたらきをします。<br>
+      Opt3 は、OptD とはちがう量だけずらすので、Opt1 とも Opt2 ともかぶりません。<br>
+      配列の番号は 0 から始まるので、<code>UpgradeNames[Opt1 - 1]</code> のように 1 を引いて取り出します。
+    </div>
+
+    <div class="term">
+      <span class="word">XPNext の式</span> … round() は四捨五入です。<br>
+      Level が 2 なら 8 + 12 + 2 ＝ 22、Level が 3 なら 8 + 18 + 4.5 ≒ 31 のように、レベルが上がるほど次に必要なジェムがふえていきます。
     </div>
 
     <div class="step">
-      <span class="step-num">10</span><span class="step-title">体力が0でゲームオーバー</span>
-      <p>新しいイベントの条件に「<strong>Variable value</strong>」で <code>PlayerHealth</code>、Sign は「≤ (less or equal to)」、値は <code>0</code>。<br>
-        アクションは <code>change the scene</code> で検索 →「<strong>Change the scene</strong>」、一覧から「<strong>Game Scene</strong>」。<br>
-        同じシーンに変えると、最初からやりなおしになります。</p>
+      <span class="step-num">10</span><span class="step-title">1・2・3キーか、クリックでえらぶ</span>
+      <p>新しいイベントを作ります。<br>
+        1つ目の条件は「Variable value」で <code>LevelingUp</code> が「<strong>True</strong>」。<br>
+        2つ目の条件は、検索欄に <code>or</code> と入れて、「<strong>Or</strong>」の条件（Advanced › Events and control flow）を選びます。<br>
+        イベントシートには「If one of these conditions is true:」と表示されます。<br>
+        その中の「Add a sub-condition」で、次の3つを入れます。</p>
+      <ul>
+        <li><code>key just pressed</code> で検索 →「<strong>Key just pressed</strong>」で <code>Num1</code>（キーボードの上の 1）</li>
+        <li>「Key just pressed」で <code>Numpad1</code>（テンキーの 1）</li>
+        <li><code>and</code> で検索 →「<strong>And</strong>」の条件（シートでは「If all of these conditions are true:」）。<br>
+          その中の「Add a sub-condition」で、左の一覧の <code>Option1Text</code> の「<strong>The cursor/touch is on an object</strong>」と、<code>mouse button released</code> で検索 →「<strong>Mouse button released</strong>」（ボタンは Left）</li>
+      </ul>
+      <p>アクションは「Change variable value」で <code>Chosen</code> を「= (set to)」<code>Opt1</code>。</p>
       <figure class="figure">
-        <a href="img/ch4-12_ui-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-12_ui-events.jpg" alt="足した3つのイベント（赤枠）" loading="lazy"></a>
-        <figcaption>ダメージ・表示・ゲームオーバーのイベント（赤枠）</figcaption>
+        <a href="img/ch4-05_choose-or.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-05_choose-or.jpg" alt="LevelingUp is true、If one of these conditions is true、Num1、Numpad1、The cursor/touch is on Option1Text と Left mouse button is released（赤枠）" loading="lazy"></a>
+        <figcaption>1番をえらぶイベント（赤枠）。<br>
+          その下に、2番・3番のイベントもならんでいます</figcaption>
+      </figure>
+      <p>このイベントを右クリック →「Copy」→「Paste」で2つふやし、2番・3番用に直します。<br>
+        <code>Num1</code>→<code>Num2</code>、<code>Numpad1</code>→<code>Numpad2</code>、<code>Option1Text</code>→<code>Option2Text</code>、<code>Opt1</code>→<code>Opt2</code> のように、数字を全部かえるのを忘れずに。</p>
+    </div>
+
+    <div class="term">
+      <span class="word">「Or」と「And」</span> … 「If one of these conditions is true」（Or）は、中の条件のどれか1つが当てはまればOK。<br>
+      「If all of these conditions are true」（And）は、中の条件が全部当てはまらないとダメ。<br>
+      だから「1キー」か「テンキーの1」か「（Option1Text の上で）かつ（クリックをはなした）」のどれかで、1番がえらばれます。<br>
+      「Key pressed」ではなく「Key just pressed」を使うのは、1回押したら1回だけえらぶためです。
+    </div>
+
+    <div class="step">
+      <span class="step-num">11</span><span class="step-title">えらんだ強化を反映する</span>
+      <p>新しいイベントを作ります。<br>
+        条件は「Variable value」で <code>LevelingUp</code> が「True」、「Variable value」で <code>Chosen</code> が「&gt; (greater than)」<code>0</code>。<br>
+        アクションは次のとおりです。</p>
+      <ul>
+        <li>「Change variable value」で <code>LevelingUp</code> を「False」に設定</li>
+        <li>「Time scale」を <code>1</code>（時間を動かす）</li>
+        <li>「Hide」で <code>LevelUpText</code>、<code>Option1Text</code>、<code>Option2Text</code>、<code>Option3Text</code>、<code>Panel</code></li>
+      </ul>
+      <p>次に、このイベントを右クリック →「Add」→「<strong>Sub Event</strong>」で、中にイベントを7つ作ります。</p>
+      <table>
+        <tr><th>サブイベントの条件（Variable value）</th><th>アクション（Change variable value）</th><th>強化</th></tr>
+        <tr><td><code>Chosen</code> ＝ 1</td><td><code>KnifeDamage</code> を「+ (add)」<code>1</code></td><td>ナイフの威力アップ</td></tr>
+        <tr><td><code>Chosen</code> ＝ 2</td><td><code>KnifeCooldown</code> を「= (set to)」<code>max(0.3, KnifeCooldown * 0.85)</code></td><td>攻撃のスピードアップ</td></tr>
+        <tr><td><code>Chosen</code> ＝ 3</td><td><code>KnifeCount</code> を「= (set to)」<code>min(5, KnifeCount + 1)</code></td><td>ナイフを1本ふやす</td></tr>
+        <tr><td><code>Chosen</code> ＝ 4</td><td><code>PlayerSpeed</code> を「+ (add)」<code>25</code></td><td>足がはやくなる</td></tr>
+        <tr><td><code>Chosen</code> ＝ 5</td><td><code>MaxHealth</code> を「+ (add)」<code>20</code>、<code>PlayerHealth</code> を「= (set to)」<code>MaxHealth</code></td><td>最大HPアップ＆全回復</td></tr>
+        <tr><td><code>Chosen</code> ＝ 6</td><td><code>KnifeDirs</code> を「= (set to)」<code>min(8, KnifeDirs * 2)</code></td><td>ナイフを投げる方向がふえる</td></tr>
+        <tr><td>（条件なし）</td><td><code>Chosen</code> を「= (set to)」<code>0</code></td><td>えらんだ番号をもどす</td></tr>
+      </table>
+      <figure class="figure">
+        <a href="img/ch4-06_apply.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-06_apply.jpg" alt="LevelingUp is true、Chosen &gt; 0 のイベントと、Chosen = 1〜6 のサブイベント（赤枠）" loading="lazy"></a>
+        <figcaption>反映のイベントとサブイベント（赤枠）。<br>
+          いちばん下が「Chosen を 0 に」のサブイベントです</figcaption>
       </figure>
     </div>
 
+    <div class="term">
+      <span class="word">max と min で「ここまで」を決める</span> … max(0.3, …) は「0.3 より小さくならない」、min(5, …) は「5 より大きくならない」という意味です。<br>
+      攻撃のスピードは 0.85 倍ずつ速くなりますが、0.3 秒より速くはなりません。<br>
+      ナイフは5本まで、方向は 1→2→4→8 と倍になって、8方向までです。<br>
+      最後に Chosen を 0 にもどすのは、次のレベルアップまでこのイベントが動かないようにするためです。
+    </div>
+
     <div class="step">
-      <span class="step-num">11</span><span class="step-title">保存して Preview</span>
-      <p>ゴブリンにさわられると、左上の赤いバーがどんどん短くなります。<br>
-        ゴブリンを倒すと、ドクロの横の数字がふえます。<br>
-        バーがなくなると、ゲームが最初から始まります。</p>
+      <span class="step-num">12</span><span class="step-title">騎士の速さを PlayerSpeed にする</span>
+      <p>Player グループに、条件のないイベントを作ります。<br>
+        アクションは、左の一覧で <code>Player</code> を選び、「<strong>Maximum speed</strong>」（TOP-DOWN CONFIGURATION のもの）で「= (set to)」<code>PlayerSpeed</code>。<br>
+        イベントシートには「Change the max. speed of Player: set to PlayerSpeed」と表示されます。<br>
+        これで「足がはやくなる」をえらぶと、騎士が速くなります。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">13</span><span class="step-title">保存して Preview</span>
+      <p>ゴブリンをたおすと、青いジェムが落ちます。<br>
+        近づくとジェムが吸いよせられ、拾うと画面の上の水色のバーがのびます。<br>
+        バーがいっぱいになると時間が止まり、強化の候補が3つ出てきます。<br>
+        1・2・3キーかクリックでえらぶと、ゲームが動き出して、えらんだ強化が効けば成功！</p>
       <figure class="figure">
-        <a href="img/ch4-13_preview.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-13_preview.jpg" alt="Previewで、左上に短くなった体力バーとドクロ1（赤枠）" loading="lazy"></a>
-        <figcaption>体力バーと倒した数（赤枠）</figcaption>
+        <a href="img/ch4-07_preview-levelup.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-07_preview-levelup.jpg" alt="Previewで、レベルアップの画面に3つの強化が出ている（赤枠）" loading="lazy"></a>
+        <figcaption>レベルアップの画面（赤枠）。<br>
+          上の時間（第5章）と下の説明文（第6章）は、まだ出ていなくて大丈夫です</figcaption>
       </figure>
     </div>
 
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ダメージの強さ（20）を変えてみよう。<br>
-        体力バーの下に、黒い「わく」の画像を置くと、もっとそれっぽくなるよ。</p>
+      <p>MagnetRange を大きくしたり、XPNext の式の数を変えたりして、レベルアップのペースを調整してみよう。<br>
+        よゆうがある人は、7つ目の強化を考えてみよう。</p>
       <details class="hint">
         <summary>ヒント</summary>
-        <p>わくは、アセットストアで <code>health bar</code> と検索すると見つかります。<br>
-          わくを UI レイヤーに置いて、Health_Bar_Fill より下（Z order を小さく）にしよう。</p>
+        <p>7つ目をふやすときは、UpgradeNames に6番の子を足し、Opt の式の 6 を 7 に、5 を 6 に、4 を 5 に変えます。<br>
+          そして、反映のイベントに「Chosen ＝ 7」のサブイベントを足そう。<br>
+          たとえば「MagnetRange を 50 ふやす」（ジェムを遠くから吸いよせる）などがおすすめです。</p>
       </details>
     </div>
 
-    <h2>4-5. 🚨 つまずきポイント集</h2>
+    <h2>4-7. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
-      <h4>体力バーや数字がプレイヤーといっしょに動いてしまう</h4>
-      <p><strong>原因:</strong> UI レイヤーではなく Base layer に置いた。</p>
-      <p><strong>直し方:</strong> 置いたものをクリックして、左の Layer が「UI」になっているか確かめよう。</p>
+      <h4>ジェムが出ない・左上に出る</h4>
+      <p><strong>原因:</strong> ジェムを作るアクションが、「Delete Goblin」より下にある。</p>
+      <p><strong>直し方:</strong> Blue_Gem の2行を、「Delete Goblin」より上にドラッグしよう。</p>
     </div>
 
     <div class="trouble">
-      <h4>すぐにゲームオーバーになる</h4>
-      <p><strong>原因:</strong> Value を <code>20</code> だけにして、TimeDelta() をかけていない。</p>
-      <p><strong>直し方:</strong> <code>20 * TimeDelta()</code> になっているか確かめよう。</p>
+      <h4>レベルアップの画面がずっと出たまま・ゲームが止まったまま</h4>
+      <p><strong>原因1:</strong> えらぶイベントの条件が「Key pressed」になっている、またはキーの名前がちがう。<br>
+        → 「Key just pressed」で <code>Num1</code> などになっているか確かめよう。</p>
+      <p><strong>原因2:</strong> 反映のイベントで、タイムスケールを 1 にもどしていない。<br>
+        → 「Time scale」を <code>1</code> にするアクションがあるか確かめよう。</p>
     </div>
 
     <div class="trouble">
-      <h4>体力バーが長くならない・短くならない</h4>
-      <p><strong>原因:</strong> Width のアクションを KillText など、別のオブジェクトに入れた。</p>
-      <p><strong>直し方:</strong> Object が <code>Health_Bar_Fill</code> になっているか確かめよう。</p>
+      <h4>強化の文字が「1：」のまま、または同じ強化が2つ出る</h4>
+      <p><strong>原因:</strong> UpgradeNames の子の型が「Text」になっていない、または Opt の式の写しまちがい。</p>
+      <p><strong>直し方:</strong> 子の型と文字を確かめて、Opt2・Opt3 の式はコピーボタンで写しなおそう。</p>
     </div>
 
-    <h2>4-6. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>パネルが赤いまま・まっ黒で何も見えない</h4>
+      <p><strong>原因:</strong> Start の「Tint color」や「Opacity」が Panel になっていない、または Opacity が 255。</p>
+      <p><strong>直し方:</strong> Panel の Tint color <code>"0;0;0"</code>、Opacity <code>170</code> になっているか確かめよう。</p>
+    </div>
+
+    <h2>4-8. ✅ チェックリスト</h2>
     <div class="checklist">
-      <label><input type="checkbox"> PlayerHealth と Kills のシーン変数を作った</label>
-      <label><input type="checkbox"> UI レイヤーに体力バー・ドクロ・数字を置いた</label>
-      <label><input type="checkbox"> ゴブリンにさわると体力バーが短くなる</label>
-      <label><input type="checkbox"> 倒すと数字がふえる</label>
-      <label><input type="checkbox"> 体力が0になると最初からになる</label>
+      <label><input type="checkbox"> たおしたゴブリンの場所にジェムが落ちる</label>
+      <label><input type="checkbox"> 近づくとジェムが吸いよせられ、拾うと XP バーがのびる</label>
+      <label><input type="checkbox"> レベルアップすると時間が止まり、3つの強化が出る</label>
+      <label><input type="checkbox"> 1・2・3キーでも、クリックでもえらべる</label>
+      <label><input type="checkbox"> えらんだ強化が効いて、ゲームが動き出す</label>
+      <label><input type="checkbox"> 左上に「Lv 2」のようにレベルが出る</label>
     </div>
     <p>全部チェックできたら第4章クリア！<br>
-      🎉 次回は、だんだん強くなるウェーブと、回復できるショップを作るよ。</p>
+      🎉 次回は、時間がたつほど強くなる敵と、ボスを作るよ。</p>
 
     <nav class="chapter-nav">
-      <a href="chapter3.html">← 第3章 ステージを作ろう</a>
-      <a href="chapter5.html">第5章 ウェーブとショップ →</a>
+      <a href="chapter3.html">← 第3章 ゴブリンがおしよせる</a>
+      <a href="chapter5.html">第5章 だんだん強くなる敵とボス →</a>
     </nav>
   </main>
 
