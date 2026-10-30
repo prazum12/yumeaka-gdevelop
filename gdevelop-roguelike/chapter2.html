@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第2章 敵がおそってくる | 夢アカGDevelop教科書（ローグライク編）</title>
+  <title>第2章 ナイフを自動で投げよう | 夢アカGDevelop教科書（ローグライク編）</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <main class="container">
     <div class="chapter-title">
       <span class="chapter-num">第2章</span>
-      <h1>敵がおそってくる</h1>
+      <h1>ナイフを自動で投げよう</h1>
       <div class="date">📅 第2回の講習で使います（日付が決まったらここに記載）</div>
     </div>
 
@@ -30,237 +30,315 @@
     <div class="goal-box">
       <h2>🎯 この章でできるようになること</h2>
       <ul>
-        <li>敵をプレイヤーのほうへ動かせる</li>
-        <li>オブジェクト変数で、敵1体ずつに体力を持たせられる</li>
-        <li>ぶつかったこと（Collision）を条件にできる</li>
-        <li>タイマーとランダムで、敵をどんどん出せる</li>
+        <li>シーン変数を作って、数や「真・偽」を覚えておける</li>
+        <li>シーンタイマーで、決まった間隔ごとにアクションを動かせる</li>
+        <li>「Repeat」（くり返し）のイベントで、同じアクションを何回もくり返せる</li>
+        <li>騎士が向いている方向へ、ナイフを自動で飛ばせる</li>
       </ul>
     </div>
+
+    <p>
+      このゲームでは、プレイヤーはナイフをねらって投げません。<br>
+      決まった間隔で、騎士が向いている方向へナイフが自動で飛んでいきます。<br>
+      プレイヤーは動いて、敵をよけることに集中できます。
+    </p>
 
     <h2>2-1. この章で作るしくみ</h2>
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>（いつも）</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンをプレイヤーのほうへ動かす<br>走るアニメーションにする</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>騎士が動いている</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>動いている向きを FaceAngle に覚えておく</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンがプレイヤーより右にいる</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンを左向きにする</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>シーンが始まった</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ナイフ用のタイマーをスタート</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンがプレイヤーより左にいる</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンを右向きにする</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>タイマーが KnifeCooldown 秒をこえた</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>タイマーをリセット、音を鳴らす<br>（本数 × 方向の数）回くり返して、ナイフを作って飛ばす</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ナイフがゴブリンに当たった</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ナイフを消す<br>ゴブリンの体力を1へらす</div>
-      </div>
-      <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>ゴブリンの体力が0以下</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>ゴブリンを消す</div>
-      </div>
-      <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>タイマーが2秒をこえた</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>タイマーをリセット<br>ランダムな場所にゴブリンを作る</div>
-      </div>
-      <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>シーンが始まったとき</div>
-        <div class="ev-act"><span class="ev-head">アクション</span>タイマーをスタート</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>ナイフが騎士から遠くなった</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ナイフを消す</div>
       </div>
     </div>
 
-    <h2>2-2. ゴブリンを用意しよう</h2>
+    <h2>2-2. ナイフと変数を用意しよう</h2>
     <div class="step">
-      <span class="step-num">1</span><span class="step-title">ゴブリンを追加する</span>
-      <p>「Objects」の「＋」から Dungeon のパックを開き、Character の中の「<strong>Goblin</strong>」を選んでプロジェクトに追加します。<br>
-        アニメーションは「Idle」と「Run」の2つです。<br>
-        ゴブリンはイベントで作り出すので、シーンには置かなくてOK。<br>
-        もし置いてしまったら、シーンのゴブリンをクリックして <code>Delete</code> キーで消しておこう。</p>
+      <span class="step-num">1</span><span class="step-title">ナイフを追加する</span>
+      <p>「Objects」の「＋」から Dungeon のパックを開き、「<strong>Weapon</strong>」の中の「<strong>Knife</strong>」を選んでプロジェクトに追加します。<br>
+        ナイフはイベントで作り出すので、シーンに置かなくてOK。<br>
+        もし置いてしまったら、シーンのナイフをクリックして <code>Delete</code> キーで消しておこう。</p>
       <figure class="figure">
-        <a href="img/ch2-01_goblin.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-01_goblin.jpg" alt="アセットストアのGoblin。作者0x72、ライセンスCC0" loading="lazy"></a>
-        <figcaption>Dungeon パックの「Goblin」</figcaption>
+        <a href="img/ch2-01_weapon-knife.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-01_weapon-knife.jpg" alt="DungeonパックのWeaponフォルダ。Knife（赤枠）を選ぶ" loading="lazy"></a>
+        <figcaption>Weapon の「Knife」（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="step">
-      <span class="step-num">2</span><span class="step-title">ゴブリンに体力（オブジェクト変数）を持たせる</span>
-      <p>一覧の Goblin の「⋮」から「<strong>Edit object</strong>」を選んで、「Edit Goblin」の画面を開きます。<br>
-        上の「<strong>Variables</strong>」のタブを開き、「<strong>Add variable</strong>」を押します。<br>
-        名前を <code>Health</code>、型は「Number」、値を <code>2</code> にして「Apply」。<br>
-        ナイフ2回で倒れるゴブリンになります。</p>
+      <span class="step-num">2</span><span class="step-title">シーン変数を作る</span>
+      <p>「Game Scene」のタブで、ステージの外の何もないところをクリックします。<br>
+        左の「<strong>Scene Variables</strong>」の右の、四角から矢印が出たマークを押すと、「Game Scene variables」の画面が開きます。<br>
+        「<strong>Add variable</strong>」で次の7つを作り、「Apply」を押します。</p>
+      <table>
+        <tr><th>名前</th><th>型</th><th>値</th><th>意味</th></tr>
+        <tr><td><code>FaceAngle</code></td><td>Number</td><td>0</td><td>騎士が向いている方向（角度）</td></tr>
+        <tr><td><code>KnifeCooldown</code></td><td>Number</td><td>1</td><td>何秒ごとにナイフを投げるか</td></tr>
+        <tr><td><code>KnifeCount</code></td><td>Number</td><td>1</td><td>1回に投げる本数</td></tr>
+        <tr><td><code>KnifeDirs</code></td><td>Number</td><td>1</td><td>投げる方向の数</td></tr>
+        <tr><td><code>KnifeIndex</code></td><td>Number</td><td>0</td><td>今、何本目を投げているか</td></tr>
+        <tr><td><code>ShotAngle</code></td><td>Number</td><td>0</td><td>今投げるナイフの角度</td></tr>
+        <tr><td><code>LevelingUp</code></td><td><strong>Boolean</strong></td><td>False</td><td>レベルアップ中かどうか（第4章で使う。<br>今は False のまま）</td></tr>
+      </table>
       <figure class="figure">
-        <a href="img/ch2-02_goblin-health.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-02_goblin-health.jpg" alt="GoblinのObject VariablesにHealth = 2（赤枠）" loading="lazy"></a>
-        <figcaption>Goblin に <code>Health</code> = <code>2</code>（赤枠）</figcaption>
+        <a href="img/ch2-02_scene-vars.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-02_scene-vars.jpg" alt="Game Scene variablesの画面。Add variableボタン（赤枠）とKnifeCooldownなどの変数（赤枠）" loading="lazy"></a>
+        <figcaption>「Add variable」（赤枠）で変数を作る。<br>
+          写真は完成したときのものなので、ほかの章で作る変数もならんでいます。<br>
+          今作るのは上の表の7つだけです（FaceAngle・KnifeDirs・LevelingUp は下のほうにあります）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">オブジェクト変数</span> … オブジェクト1つ1つが、べつべつに持っている変数。<br>
-      ゴブリンが10体いたら、10体それぞれが自分の Health を持っています。<br>
-      だから、ナイフが当たったゴブリンだけ体力がへります。
+      <span class="word">シーン変数</span> … シーンに1つだけある「数や文字を入れておく箱」。<br>
+      型が「Number」なら数を、「Boolean」（真偽値）なら「True」（真＝はい）か「False」（偽＝いいえ）のどちらかを覚えます。<br>
+      ナイフの本数や間隔を変数にしておくと、第4章のレベルアップで数を変えるだけで強くできます。
     </div>
 
-    <h2>2-3. ゴブリンが追いかけてくる</h2>
-    <p>イベントシートで新しいグループ <code>Enemy</code> を作ります。</p>
-
     <div class="step">
-      <span class="step-num">3</span><span class="step-title">プレイヤーのほうへ動かす</span>
-      <p>条件のないイベントを作ります（条件は空のままでOK）。<br>
-        アクションは2つです。</p>
-      <ul>
-        <li><code>move toward</code> で検索 →「<strong>Add a force to move toward an object</strong>」、Object は <code>Goblin</code>、Target は <code>Player</code>、Speed は <code>100</code>、下は「<strong>Instant</strong>」のまま</li>
-        <li>「Animation (by name)」で <code>Goblin</code> を「<strong>Run</strong>」</li>
-      </ul>
+      <span class="step-num">3</span><span class="step-title">騎士の向きを覚えておく</span>
+      <p>「Game Scene (Events)」を開き、<strong>Player グループ</strong>のいちばん下に新しいイベントを作ります。<br>
+        条件は「<strong>Is moving</strong>」で <code>Player</code>。<br>
+        アクションは <code>change variable value</code> で検索 →「<strong>Change variable value</strong>」、Variable は <code>FaceAngle</code>、Modification's sign は「<strong>= (set to)</strong>」、Value は下の式。</p>
+      <div class="code-block"><span class="code-label">Value</span><button class="copy-btn" type="button">コピー</button><pre><code>Player.TopDownMovement::Angle()</code></pre></div>
       <figure class="figure">
-        <a href="img/ch2-03_goblin-chase.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-03_goblin-chase.jpg" alt="Add a force to move toward an object。Goblin、Player、100（赤枠）" loading="lazy"></a>
-        <figcaption>Goblin を Player のほうへ 100 の速さで（赤枠）</figcaption>
+        <a href="img/ch2-03_face-angle.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-03_face-angle.jpg" alt="Change variable valueで、FaceAngleをPlayer.TopDownMovement::Angle()にする（赤枠）" loading="lazy"></a>
+        <figcaption>FaceAngle ＝ Player.TopDownMovement::Angle()（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">条件のないイベント</span> … 条件を入れないと、「いつも」（1秒に60回くらい）アクションが動きます。<br>
-      Instant の力を毎回かけるので、ゴブリンはずっとプレイヤーを追いかけ続けます。
+      <span class="word">FaceAngle のわけ</span> … Player.TopDownMovement::Angle() は、騎士が今歩いている方向を角度で教えてくれる式です。<br>
+      右が 0、下が 90、左が 180、上が 270（−90）です。<br>
+      でも、止まっているときは歩いていないので、方向がわかりません。<br>
+      そこで「動いているときだけ」FaceAngle に覚えておけば、止まったあとも最後に向いていた方向へナイフを投げられます。
+    </div>
+
+    <h2>2-3. タイマーでナイフを投げよう</h2>
+    <div class="step">
+      <span class="step-num">4</span><span class="step-title">シーンが始まったらタイマーをスタート</span>
+      <p>右下の「+ Add...」→「Event group」で、新しいグループ <code>Start</code> を作ります。<br>
+        その中に、条件 <code>beginning of the scene</code> →「<strong>At the beginning of the scene</strong>」のイベントを作ります。<br>
+        アクションは <code>start (or reset) a scene timer</code> で検索 →「<strong>Start (or reset) a scene timer</strong>」、Timer's name は <code>"KnifeTimer"</code>（ダブルクォーテーションごと入れる）。<br>
+        これがないとタイマーが動かず、ナイフが1本も飛びません。</p>
     </div>
 
     <div class="step">
-      <span class="step-num">4</span><span class="step-title">ゴブリンの向きを変える</span>
-      <p>新しいイベントの条件に、<code>X position</code> で検索 →「<strong>X position</strong>」を入れます。<br>
-        Object は <code>Goblin</code>、Sign は「<strong>&gt; (greater than)</strong>」、値は <code>Player.X()</code>。<br>
-        アクションは「Flip the object horizontally」で <code>Goblin</code> を「Yes」。</p>
-      <p>もう1つイベントを作り、Sign を「<strong>≤ (less or equal to)</strong>」、Flip を「<strong>No</strong>」にします。<br>
-        ゴブリンがいつもプレイヤーのほうを向くようになります。</p>
-      <figure class="figure">
-        <a href="img/ch2-04_goblin-xpos.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-04_goblin-xpos.jpg" alt="X positionの条件。Goblin、&gt;、Player.X()（赤枠）" loading="lazy"></a>
-        <figcaption>Goblin の X が Player.X() より大きい（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <h2>2-4. ナイフで倒そう</h2>
-    <div class="step">
-      <span class="step-num">5</span><span class="step-title">ナイフが当たったら体力をへらす</span>
-      <p>新しいイベントの条件に、<code>collision</code> で検索 →「<strong>Collision</strong>」（General › Objects の、いちばん上のもの）を入れます。<br>
-        1つ目の Object は <code>Knife</code>、2つ目は <code>Goblin</code>。</p>
-      <figure class="figure">
-        <a href="img/ch2-05_knife-hit.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-05_knife-hit.jpg" alt="Collisionの条件。KnifeとGoblin（赤枠）" loading="lazy"></a>
-        <figcaption>Knife と Goblin がぶつかった（赤枠）</figcaption>
-      </figure>
-      <p>アクションは2つです。</p>
+      <span class="step-num">5</span><span class="step-title">KnifeCooldown 秒ごとに動くイベントを作る</span>
+      <p>もう1つ新しいグループ <code>Knife</code> を作り、その中にイベントを作ります。<br>
+        条件は2つです。</p>
       <ul>
-        <li>「Delete the object」で <code>Knife</code></li>
-        <li><code>change object variable value</code> で検索 →「<strong>Change object variable value</strong>」、Object は <code>Goblin</code>、Variable は <code>Health</code>、Modification's sign は「<strong>- (subtract)</strong>」（引く）、Value は <code>1</code></li>
+        <li><code>variable value</code> で検索 →「<strong>Variable value</strong>」、Variable は <code>LevelingUp</code>、「<strong>False</strong>」</li>
+        <li><code>scene timer</code> で検索 →「<strong>Value of a scene timer</strong>」、Timer's name は <code>"KnifeTimer"</code>、Sign of the test は「<strong>≥ (greater or equal to)</strong>」、Time in seconds は <code>KnifeCooldown</code></li>
       </ul>
       <figure class="figure">
-        <a href="img/ch2-06_goblin-damage.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-06_goblin-damage.jpg" alt="Change object variable value。GoblinのHealthから1を引く（赤枠）" loading="lazy"></a>
-        <figcaption>当たったゴブリンの Health から 1 を引く（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="step">
-      <span class="step-num">6</span><span class="step-title">体力が0になったら消す</span>
-      <p>新しいイベントの条件に、<code>object variable value</code> で検索 →「<strong>Object variable value</strong>」。<br>
-        Object は <code>Goblin</code>、Variable は <code>Health</code>、Sign は「<strong>≤ (less or equal to)</strong>」、値は <code>0</code>。<br>
-        アクションは「Delete the object」で <code>Goblin</code>。</p>
-      <figure class="figure">
-        <a href="img/ch2-07_health-zero.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-07_health-zero.jpg" alt="Object variable valueの条件。GoblinのHealthが0以下（赤枠）" loading="lazy"></a>
-        <figcaption>Goblin の Health が 0 以下（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <h2>2-5. ゴブリンをどんどん出そう</h2>
-    <div class="step">
-      <span class="step-num">7</span><span class="step-title">2秒ごとにゴブリンを作る</span>
-      <p>新しいイベントの条件に、<code>scene timer</code> で検索 →「<strong>Value of a scene timer</strong>」。<br>
-        Timer's name は <code>"EnemyTimer"</code>（ダブルクォーテーションごと入れる）、Sign は「<strong>≥ (greater or equal to)</strong>」、Time は <code>2</code>。</p>
-      <figure class="figure">
-        <a href="img/ch2-08_enemy-timer.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-08_enemy-timer.jpg" alt="Value of a scene timer。&quot;EnemyTimer&quot;、≥、2（赤枠）" loading="lazy"></a>
-        <figcaption>タイマー "EnemyTimer" が 2 秒以上（赤枠）</figcaption>
+        <a href="img/ch2-04_knife-timer.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-04_knife-timer.jpg" alt="Value of a scene timerの条件。&quot;KnifeTimer&quot;、≥ (greater or equal to)、KnifeCooldown（赤枠）" loading="lazy"></a>
+        <figcaption>"KnifeTimer" が KnifeCooldown 秒以上（赤枠）</figcaption>
       </figure>
       <p>アクションは3つです。</p>
       <ul>
-        <li><code>start (or reset) a scene timer</code> で検索 →「<strong>Start (or reset) a scene timer</strong>」、<code>"EnemyTimer"</code>（0にもどす）</li>
-        <li>「Create an object」で <code>Goblin</code> を、下の式の場所に作る</li>
-        <li>「Scale」で <code>Goblin</code> を <code>3</code></li>
+        <li>「Start (or reset) a scene timer」で <code>"KnifeTimer"</code>（0にもどして、また数えはじめる）</li>
+        <li>「Change variable value」で <code>KnifeIndex</code> を「= (set to)」<code>0</code></li>
+        <li>投げる音（下の説明）</li>
       </ul>
-      <div class="code-block"><span class="code-label">X position</span><button class="copy-btn" type="button">コピー</button><pre><code>RandomInRange(200, 1100)</code></pre></div>
-      <div class="code-block"><span class="code-label">Y position</span><button class="copy-btn" type="button">コピー</button><pre><code>RandomInRange(150, 600)</code></pre></div>
+      <p>音は <code>play a sound</code> で検索 →「<strong>Play a sound</strong>」を選びます。<br>
+        「Choose the audio file to use」の欄をクリックして、「<strong>Choose from asset store</strong>」を押そう。</p>
       <figure class="figure">
-        <a href="img/ch2-09_spawn-goblin.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-09_spawn-goblin.jpg" alt="Create an objectでGoblinをRandomInRangeの場所に作る（赤枠）" loading="lazy"></a>
-        <figcaption>ランダムな場所にゴブリンを作る（赤枠）</figcaption>
+        <a href="img/ch2-04a_play-sound.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-04a_play-sound.jpg" alt="Play a soundのアクション。Choose from asset store（赤枠）" loading="lazy"></a>
+        <figcaption>「Play a sound」→「Choose from asset store」（赤枠）</figcaption>
+      </figure>
+      <p>検索欄に <code>throw</code> と入力すると、「<strong>sfx_throw.ogg</strong>」（作者: Kenney、CC0）が出てきます。<br>
+        左の ▷ を押すと、音をためしに聞けます。<br>
+        選んで「<strong>Add to project</strong>」を押します。<br>
+        もとの画面にもどったら、Volume（音の大きさ）に <code>30</code> と入れて「Ok」。<br>
+        音がなくてもナイフは飛ぶので、うまくいかないときはあとまわしでも大丈夫です。</p>
+      <figure class="figure">
+        <a href="img/ch2-04b_throw-sound.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-04b_throw-sound.jpg" alt="New resourceの画面でthrowと検索し、sfx_throw.oggを選んでAdd to project（赤枠）" loading="lazy"></a>
+        <figcaption><code>throw</code> で検索 → 音を選んで「Add to project」（赤枠）</figcaption>
       </figure>
     </div>
 
     <div class="term">
-      <span class="word">RandomInRange(200, 1100)</span> … 200 から 1100 までの中から、ランダムに（でたらめに）1つ数を選ぶ式。<br>
-      毎回ちがう場所にゴブリンが出てきます。
+      <span class="word">シーンタイマー</span> … シーンの中で時間を数えるストップウォッチ。<br>
+      名前をつけて、いくつでも使えます。<br>
+      「KnifeCooldown 秒たったら → リセットして投げる」をくり返すので、1秒ごとにナイフが飛びます。<br>
+      LevelingUp の条件は、第4章でレベルアップの画面を出しているあいだ、ナイフを止めるためのものです。
+    </div>
+
+    <h2>2-4. くり返しでナイフを作ろう</h2>
+    <div class="step">
+      <span class="step-num">6</span><span class="step-title">「Repeat」（くり返し）を入れる</span>
+      <p>今作ったイベントを右クリックして、「<strong>Add</strong>」→「<strong>Repeat</strong>」を選びます（「Sub Event」ではありません）。<br>
+        繰り返す回数には下の式を入れます。</p>
+      <figure class="figure">
+        <a href="img/ch2-05a_add-menu.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-05a_add-menu.jpg" alt="イベントの右クリックメニューのAddの中に、Else、For each object、Repeat（赤枠）" loading="lazy"></a>
+        <figcaption>右クリック →「Add」の中に「Else」「For each object」「Repeat」があります（赤枠）。<br>
+          この写真は3Dアクション編のプロジェクトで撮ったものです</figcaption>
+      </figure>
+      <div class="code-block"><span class="code-label">繰り返す回数</span><button class="copy-btn" type="button">コピー</button><pre><code>KnifeDirs * KnifeCount</code></pre></div>
+      <p>繰り返しのイベントは、右クリックしたイベントの<strong>下</strong>（同じ段）にできます。<br>
+        そのままだと、タイマーに関係なく毎回動いてしまいます。<br>
+        必ずドラッグして、写真のようにタイマーのイベントの<strong>中</strong>（一段右にずれた場所）に入れよう。<br>
+        イベントシートには「Repeat KnifeDirs * KnifeCount times:」と表示されます。</p>
+      <figure class="figure">
+        <a href="img/ch2-05_repeat.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-05_repeat.jpg" alt="Knifeグループ。タイマーのイベントの中に、Repeat KnifeDirs * KnifeCount times:（赤枠）" loading="lazy"></a>
+        <figcaption>タイマーのイベントの中に「Repeat KnifeDirs * KnifeCount times:」（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">本数 × 方向の数</span> … KnifeCount（本数）が 2、KnifeDirs（方向の数）が 2 なら、2 × 2 ＝ 4本投げます。<br>
+      今はどちらも 1 なので、1回だけくり返して、1本だけ投げます。<br>
+      第4章のレベルアップで、この数がふえていきます。
     </div>
 
     <div class="step">
-      <span class="step-num">8</span><span class="step-title">シーンが始まったらタイマーをスタート</span>
-      <p>最後に、条件 <code>at the beginning of the scene</code> →「<strong>At the beginning of the scene</strong>」のイベントを作ります。<br>
-        アクションは「Start (or reset) a scene timer」で <code>"EnemyTimer"</code>。<br>
-        これがないとタイマーが動かず、ゴブリンが1体も出てきません。</p>
+      <span class="step-num">7</span><span class="step-title">繰り返しの中のアクションを入れる</span>
+      <p>繰り返しのイベントに、アクションを6つ入れます。<br>
+        上から順番に入れよう。</p>
+      <ol>
+        <li><code>create an object</code> で検索 →「<strong>Create an object</strong>」、<code>Knife</code> を X <code>Player.CenterX()</code>、Y <code>Player.CenterY()</code> に作る</li>
+        <li>「Change variable value」で <code>ShotAngle</code> を「= (set to)」、Value は下の式</li>
+        <li><code>angle</code> で検索 →「<strong>Angle</strong>」、<code>Knife</code> を「= (set to)」<code>ShotAngle + 90</code></li>
+        <li>左の一覧で <code>Knife</code> を選び、「<strong>Add a force (angle)</strong>」、Angle <code>ShotAngle</code>、Speed (in pixels per second) <code>650</code>、下は「<strong>Permanent</strong>」</li>
+        <li><code>scale</code> で検索 →「<strong>Scale</strong>」、<code>Knife</code> を「= (set to)」<code>3</code>（3倍の大きさ）</li>
+        <li>「Change variable value」で <code>KnifeIndex</code> を「+ (add)」<code>1</code></li>
+      </ol>
+      <div class="code-block"><span class="code-label">ShotAngle の値（おまじない）</span><button class="copy-btn" type="button">コピー</button><pre><code>FaceAngle + floor(KnifeIndex / KnifeCount) * 360 / KnifeDirs + (mod(KnifeIndex, KnifeCount) - (KnifeCount - 1) / 2) * 12</code></pre></div>
       <figure class="figure">
-        <a href="img/ch2-10_enemy-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-10_enemy-events.jpg" alt="Enemyグループのイベント全部（赤枠）" loading="lazy"></a>
-        <figcaption>Enemy グループのイベント（赤枠）</figcaption>
+        <a href="img/ch2-06_knife-actions.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-06_knife-actions.jpg" alt="繰り返しの中の6つのアクション（赤枠）" loading="lazy"></a>
+        <figcaption>繰り返しの中のアクション6つ（赤枠）</figcaption>
       </figure>
+      <figure class="figure">
+        <a href="img/ch2-07_knife-force.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-07_knife-force.jpg" alt="Add a force (angle)。Angle ShotAngle、Speed 650、Permanent（赤枠）" loading="lazy"></a>
+        <figcaption>「Add a force (angle)」で ShotAngle、650、Permanent（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">ShotAngle の式（おまじない）</span> … むずかしい式なので、コピーしてそのまま使えばOK。<br>
+      でも、中身はこんなことをしています。
+      <ul>
+        <li><code>FaceAngle</code> … 騎士が向いている方向が、スタートの角度</li>
+        <li><code>floor(KnifeIndex / KnifeCount) * 360 / KnifeDirs</code> … 何番目の方向かを決めて、360度を方向の数で分けた分だけ回す（方向が2つなら前と後ろ、4つなら十字）</li>
+        <li><code>(mod(KnifeIndex, KnifeCount) - (KnifeCount - 1) / 2) * 12</code> … 同じ方向に何本も投げるとき、12度ずつ扇のように広げる</li>
+      </ul>
+      今は KnifeDirs も KnifeCount も 1 なので、うしろの2つは 0 になります。<br>
+      つまり今は、ShotAngle は FaceAngle と同じ角度です。
+    </div>
+
+    <div class="term">
+      <span class="word">+ 90 のわけ</span> … Knife の画像は、もともと上を向いています。<br>
+      そのままだと横向きに飛んでしまうので、90度足して、刃先が飛ぶ方向を向くようにしています。
+    </div>
+
+    <div class="term">
+      <span class="word">Permanent</span> … 一度つけたら、ずっと同じ方向に押しつづけるフォース（力）。<br>
+      「Instant」にすると、一瞬だけ押されてすぐ止まってしまいます。<br>
+      イベントシートには「Add to Knife a permanent force, angle: ShotAngle degrees and length: 650 pixels」と表示されます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">8</span><span class="step-title">遠くへ行ったナイフを消す</span>
+      <p>Knife グループに新しいイベントを作ります（繰り返しの中ではなく、タイマーのイベントの下）。<br>
+        条件は、左の一覧で <code>Knife</code> を選び、「<strong>Distance between two objects</strong>」、Object 2 は <code>Player</code>、Distance は <code>700</code>。<br>
+        「<strong>Invert condition</strong>」をONにして「700 より遠い」にします。<br>
+        アクションは「<strong>Delete the object</strong>」で <code>Knife</code>。</p>
+      <figure class="figure">
+        <a href="img/ch2-08_knife-delete.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-08_knife-delete.jpg" alt="Distance between two objects。Player、700、Invert condition ON（赤枠）" loading="lazy"></a>
+        <figcaption>Player まで 700、「Invert condition」をON（赤枠）</figcaption>
+      </figure>
+      <p>イベントシートには「Knife distance to Player is below 700 pixels」と出て、反転のしるしがつきます。<br>
+        遠くへ行ったナイフを消さないと、見えないナイフがどんどんたまって、ゲームが重くなってしまいます。</p>
     </div>
 
     <div class="step">
       <span class="step-num">9</span><span class="step-title">保存して Preview</span>
       <p>保存してから Preview します。<br>
-        2秒ごとにゴブリンが出てきて、騎士を追いかけてきます。<br>
-        ナイフを2回当てると、ゴブリンが消えます。<br>
-        まだゴブリンにさわってもダメージはありません（第4章で作ります）。</p>
+        止まっていても動いていても、1秒ごとに、騎士が向いている方向へナイフが飛んでいきます。<br>
+        右へ歩けば右へ、上へ歩けば上へ飛びます。<br>
+        音を入れた人は、投げるたびに「シュッ」と鳴れば成功！</p>
       <figure class="figure">
-        <a href="img/ch2-11_preview.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-11_preview.jpg" alt="Previewで、騎士のまわりにゴブリンが集まってくる（赤枠）" loading="lazy"></a>
-        <figcaption>ゴブリンが追いかけてくる（赤枠）</figcaption>
+        <a href="img/ch2-09_preview.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch2-09_preview.jpg" alt="Previewで、右を向いた騎士から右へナイフが飛んでいる（赤枠）" loading="lazy"></a>
+        <figcaption>向いている方向へナイフが飛ぶ（赤枠）。<br>
+          写真は完成したときのものなので、体力バーやゴブリンも写っています</figcaption>
       </figure>
     </div>
 
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ゴブリンの速さ（100）、体力（2）、出てくる間かく（2秒）を変えて、むずかしさを調整してみよう。</p>
+      <p>シーン変数の KnifeCount を <code>3</code> にして Preview してみよう。<br>
+        次に KnifeDirs を <code>4</code> にしてみよう。<br>
+        ナイフの飛び方がどう変わるか、たしかめたら 1 にもどしておこう。</p>
       <details class="hint">
         <summary>ヒント</summary>
-        <p>速さは「Add a force to move toward an object」、体力は Goblin の Object Variables、間かくはタイマーの条件の数字です。</p>
+        <p>KnifeCount を 3 にすると、同じ方向に3本が扇のように広がって飛びます。<br>
+          KnifeDirs を 4 にすると、前・うしろ・左右の4方向に飛びます。<br>
+          これが第4章のレベルアップで手に入る強化です。</p>
       </details>
     </div>
 
-    <h2>2-6. 🚨 つまずきポイント集</h2>
+    <h2>2-5. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
-      <h4>ゴブリンが1体も出てこない</h4>
-      <p><strong>原因:</strong> 「At the beginning of the scene」でタイマーをスタートしていない、またはタイマーの名前がちがう。</p>
-      <p><strong>直し方:</strong> 2か所とも <code>"EnemyTimer"</code> になっているか、大文字・小文字まで確かめよう。</p>
+      <h4>ナイフが1本も飛ばない</h4>
+      <p><strong>原因1:</strong> 「At the beginning of the scene」でタイマーをスタートしていない、またはタイマーの名前がちがう。<br>
+        → 2か所とも <code>"KnifeTimer"</code> になっているか、大文字・小文字まで確かめよう。</p>
+      <p><strong>原因2:</strong> LevelingUp の値が「True」になっている。<br>
+        → シーン変数の画面で、LevelingUp が「False」になっているか確かめよう。</p>
     </div>
 
     <div class="trouble">
-      <h4>ゴブリンがとても小さい</h4>
-      <p><strong>原因:</strong> 作ったあとの「Scale」を入れていない。</p>
-      <p><strong>直し方:</strong> Create an object のすぐ下に「Scale」で 3 を入れよう。</p>
+      <h4>ナイフが出るけど動かない</h4>
+      <p><strong>原因:</strong> フォースが「Instant」になっている。</p>
+      <p><strong>直し方:</strong> 「Add a force (angle)」を開いて、「Permanent」を選びなおそう。</p>
     </div>
 
     <div class="trouble">
-      <h4>ナイフが当たっても倒れない</h4>
-      <p><strong>原因:</strong> Health をシーン変数に作ってしまった、または「Object variable value」ではなく「Variable value」を使った。</p>
-      <p><strong>直し方:</strong> 一覧の Goblin をクリックして、左の Object Variables に Health（2）があるか確かめよう。</p>
+      <h4>ナイフが横向きのまま飛ぶ</h4>
+      <p><strong>原因:</strong> Angle の式に「+ 90」がない。</p>
+      <p><strong>直し方:</strong> Knife の Angle が <code>ShotAngle + 90</code> になっているか確かめよう。</p>
     </div>
 
-    <h2>2-7. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>ナイフがものすごくたくさん出る</h4>
+      <p><strong>原因:</strong> 繰り返しのイベントがタイマーのイベントの中に入っていない。<br>
+      または、「Start (or reset) a scene timer」を入れ忘れたか、繰り返しの中に入れてしまった。</p>
+      <p><strong>直し方:</strong> 繰り返しのイベントを、ドラッグしてタイマーのイベントの中（一段右）に入れよう。<br>
+      タイマーのリセットは、繰り返しの外（タイマーのイベントのアクション）に入れよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>いつも右にしか飛ばない</h4>
+      <p><strong>原因:</strong> FaceAngle を覚えるイベントがない、または ShotAngle の式に FaceAngle が入っていない。</p>
+      <p><strong>直し方:</strong> Player グループに「Is moving → FaceAngle ＝ Player.TopDownMovement::Angle()」があるか確かめよう。</p>
+    </div>
+
+    <h2>2-6. ✅ チェックリスト</h2>
     <div class="checklist">
-      <label><input type="checkbox"> Goblin に Health（2）のオブジェクト変数を作った</label>
-      <label><input type="checkbox"> ゴブリンが騎士を追いかけてくる</label>
-      <label><input type="checkbox"> ゴブリンが騎士のほうを向く</label>
-      <label><input type="checkbox"> ナイフ2回でゴブリンが消える</label>
-      <label><input type="checkbox"> 2秒ごとにゴブリンが出てくる</label>
+      <label><input type="checkbox"> Knife をプロジェクトに追加した（シーンには置いていない）</label>
+      <label><input type="checkbox"> シーン変数を7つ作った</label>
+      <label><input type="checkbox"> 動いている向きを FaceAngle に覚えるようにした</label>
+      <label><input type="checkbox"> Start グループで "KnifeTimer" をスタートした</label>
+      <label><input type="checkbox"> 1秒ごとに、向いている方向へナイフが飛ぶ</label>
+      <label><input type="checkbox"> 遠くへ行ったナイフが消える</label>
     </div>
     <p>全部チェックできたら第2章クリア！<br>
-      🎉 次回は、タイルマップでステージを作るよ。</p>
+      🎉 次回は、ゴブリンがおしよせてくるよ。</p>
 
     <nav class="chapter-nav">
       <a href="chapter1.html">← 第1章 プレイヤーを動かそう</a>
-      <a href="chapter3.html">第3章 ステージを作ろう →</a>
+      <a href="chapter3.html">第3章 ゴブリンがおしよせる →</a>
     </nav>
   </main>
 

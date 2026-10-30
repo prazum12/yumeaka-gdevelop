@@ -80,7 +80,7 @@
       <p>一覧に「Zombie_Basic」ができます。<br>
         右の「<strong>⋮</strong>」を押して「<strong>Rename</strong>」を選び、名前を <code>Zombie</code> にして <code>Enter</code>。<br>
         次に Zombie をクリックして、左の「Default size」の Width・Height・Depth を全部 <code>70</code> にします。<br>
-        主人公（高さ60）より少し大きいくらいです。</p>
+        第1章で大きさを 70 にした主人公と、同じくらいの大きさです。</p>
       <figure class="figure">
         <a href="img/ch4-02_zombie-size.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-02_zombie-size.jpg" alt="Zombieの大きさを70、70、70にしたところ（赤枠）。一覧にZombie（赤枠）" loading="lazy"></a>
         <figcaption>名前を Zombie にして、大きさを 70 に（赤枠）</figcaption>
@@ -114,20 +114,12 @@
     </div>
 
     <div class="step">
-      <span class="step-num">5</span><span class="step-title">UI 用のレイヤーを作る</span>
+      <span class="step-num">5</span><span class="step-title">UI レイヤーを選ぶ</span>
       <p>HP の文字は、カメラが動いても画面の左上にずっと表示させたいです。<br>
-        そこで、<strong>カメラが動いても画面に貼りついたままの層</strong>、レイヤーを作ります。<br>
-        画面右上のボタンの列にある、紙が重なったマークのボタンを押すと、右下に「<strong>Layers</strong>」のパネルが開きます。<br>
-        パネルの右上の「＋」を押して、名前を <code>UI</code> にします。<br>
-        そのあと、UI の行の右にある「<strong>○</strong>」を押して、●にします。<br>
+        そこで、第2章でトラックの案内を置いた <strong>UI レイヤー</strong>（カメラが動いても画面に貼りついたままの層）に置きます。<br>
+        右下の「<strong>Layers</strong>」のパネルで、UI の行の右にある「<strong>○</strong>」を押して、●にします。<br>
+        パネルが見えないときは、画面右上のボタンの列にある、紙が重なったマークのボタンを押そう。<br>
         ●がついたレイヤーに、これから置くものが入ります。</p>
-    </div>
-
-    <div class="term">
-      <span class="word">レイヤー</span> … 透明なシートを何枚も重ねたようなしくみ。<br>
-      街やゾンビは下のシート（Base layer）、HP の文字は上のシート（UI）に描くイメージ。<br>
-      カメラが動かすのは下のシートだけなので、UI の文字は画面の同じ場所に出続けます。<br>
-      最初からある「MobileControls」は、スマホ用のボタンを置くためのレイヤーです。
     </div>
 
     <div class="step">
@@ -221,17 +213,18 @@
         <li>「Animation (by name)」で <code>Zombie</code> を「<strong>Punch</strong>」（パンチ）</li>
         <li><code>change variable value</code> で検索 →「<strong>Change variable value</strong>」、Variable は <code>PlayerHealth</code>、Modification's sign は「<strong>- (subtract)</strong>」（引く）、Value は下の式</li>
       </ul>
-      <div class="code-block"><span class="code-label">Value（へらす量）</span><button class="copy-btn" type="button">コピー</button><pre><code>20 * TimeDelta()</code></pre></div>
+      <div class="code-block"><span class="code-label">Value（へらす量）</span><button class="copy-btn" type="button">コピー</button><pre><code>12 * TimeDelta()</code></pre></div>
       <figure class="figure">
-        <a href="img/ch4-10_damage.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-10_damage.jpg" alt="Change variable valueのアクション。PlayerHealthから20 * TimeDelta()を引く（赤枠）" loading="lazy"></a>
-        <figcaption>PlayerHealth から <code>20 * TimeDelta()</code> を引く（赤枠）</figcaption>
+        <a href="img/ch4-10_damage.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-10_damage.jpg" alt="Change variable valueのアクション。Variable PlayerHealth、Modification's sign - (subtract)、Value 12 * TimeDelta()（赤枠）" loading="lazy"></a>
+        <figcaption>PlayerHealth から <code>12 * TimeDelta()</code> を引く（赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、上のタブに第6章で作る Title などのシーンも見えている</figcaption>
       </figure>
     </div>
 
     <div class="term">
       <span class="word">TimeDelta()</span> … 前の画面から今の画面までにかかった時間（秒）。<br>
       ゲームは1秒に60回くらい画面をかきかえるので、TimeDelta() はだいたい 0.016 です。<br>
-      <code>20 * TimeDelta()</code> を毎回引くと、ちょうど「1秒で20へる」になります。<br>
+      <code>12 * TimeDelta()</code> を毎回引くと、ちょうど「1秒で12へる」になります。<br>
       PC が速くても遅くても、同じペースでへるのがポイントです。
     </div>
 
@@ -258,7 +251,8 @@
       <p>Zombie グループの中が、下の写真と同じ4つのイベントになっていればOK。</p>
       <figure class="figure">
         <a href="img/ch4-12_zombie-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-12_zombie-events.jpg" alt="Zombieグループの4つのイベント（赤枠）" loading="lazy"></a>
-        <figcaption>Zombie グループの4つのイベント（赤枠）</figcaption>
+        <figcaption>Zombie グループの4つのイベント（赤枠）。<br>
+          下に見える Battle グループは、第5章で作るもの</figcaption>
       </figure>
     </div>
 
@@ -271,27 +265,28 @@
         走ってにげたり、トラックに乗ったりしてみよう。</p>
       <figure class="figure">
         <a href="img/ch4-13_preview-walk.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-13_preview-walk.jpg" alt="Previewで左右からゾンビ（赤枠）が歩いてくる。左上にHP: 100（赤枠）" loading="lazy"></a>
-        <figcaption>左右からゾンビ（赤枠）が歩いてくる</figcaption>
+        <figcaption>左右からゾンビ（赤枠）が歩いてくる。</figcaption>
       </figure>
       <figure class="figure">
         <a href="img/ch4-14_preview-attack.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch4-14_preview-attack.jpg" alt="Previewで主人公がゾンビにかこまれ（赤枠）、HPが24にへっている（赤枠）" loading="lazy"></a>
-        <figcaption>かこまれると HP がへっていく（赤枠）</figcaption>
+        <figcaption>かこまれると HP がへっていく（赤枠）。</figcaption>
       </figure>
     </div>
 
     <div class="term">
       <span class="word">HP がマイナスに？</span> … 今は HP が 0 になってもゲームは終わらず、マイナスになっていきます。<br>
-      次の章で、ゲームオーバーのしくみを作ります。
+      次の章で、HP が 0 になったら最初からやり直すしくみを作ります。<br>
+      「GAME OVER」の画面は、第6章で作ります。
     </div>
 
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ゾンビの速さ（80）や、HP のへる量（20）を変えて、ちょうどいいむずかしさにしてみよう。<br>
+      <p>ゾンビの速さ（80）や、HP のへる量（12）を変えて、ちょうどいいむずかしさにしてみよう。<br>
         ゾンビをもっとたくさん置いてみるのもおもしろいよ。</p>
       <details class="hint">
         <summary>ヒント</summary>
         <p>Character フォルダには「Zombie Chubby」や「Zombie Ribcage」など、ほかのゾンビもいます。<br>
-          オブジェクトを右クリックして「Swap assets」を使うと、イベントはそのままで見た目だけ入れかえられます。</p>
+          オブジェクトを右クリックして「Swap assets」を使うと、イベントはそのままで見た目だけ入れかえられます（第1章で主人公を入れかえたのと同じやり方）。</p>
       </details>
     </div>
 

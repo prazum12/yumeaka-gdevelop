@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>第6章 仕上げて発表しよう 〜自分だけの作品に〜 | 夢アカGDevelop教科書（ローグライク編）</title>
+  <title>第6章 仕上げて発表しよう | 夢アカGDevelop教科書（ローグライク編）</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
   <main class="container">
     <div class="chapter-title">
       <span class="chapter-num">第6章</span>
-      <h1>仕上げて発表しよう 〜自分だけの作品に〜</h1>
+      <h1>仕上げて発表しよう</h1>
       <div class="date">📅 第6回の講習で使います（日付が決まったらここに記載）</div>
     </div>
 
@@ -30,20 +30,228 @@
     <div class="goal-box">
       <h2>🎯 この章でできるようになること</h2>
       <ul>
-        <li>自分のゲームを良くするための「仕上げ計画」を立てられる</li>
-        <li>これまで覚えたことを組み合わせて、自分で新しいしかけを作れる</li>
-        <li>人に遊んでもらって、意見をもとにゲームを直せる</li>
-        <li>自分の作品の「こだわり」と「工夫」を、人に伝えられる</li>
+        <li>グローバル変数で、シーンをまたいで結果を受けわたせる</li>
+        <li>タイトル・ゲームオーバー・クリアの画面を作って、ゲームを1本につなげられる</li>
+        <li>変数や式の数を変えて、自分の好きなむずかしさに調整できる</li>
+        <li>人に遊んでもらい、作品の「こだわり」と「工夫」を伝えられる</li>
       </ul>
     </div>
 
     <p>
       ※ 第5章までが終わっていない人も大丈夫。<br>
       今日は「できているところまで」を自分の作品として仕上げて発表します。<br>
-      ウェーブやショップがなくても、騎士がナイフを投げてゴブリンを倒せれば立派な作品だよ。
+      ボスがいなくても、騎士がナイフでゴブリンをたおしてレベルアップできれば、立派な作品だよ。
     </p>
 
-    <h2>6-1. 今日の進め方</h2>
+    <h2>6-1. この章で作るしくみ</h2>
+    <div class="event-sheet">
+      <div class="ev-label">この章で作るルール（まとめ）</div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>体力が0以下（Game Scene）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>時間とレベルを覚えて、GameOver のシーンへ</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>ボスの体力が0以下（Game Scene）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>時間とレベルを覚えて、Clear のシーンへ</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>Space キーが押された（Title）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>Game Scene へ（ゲームスタート）</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>（いつも）（GameOver）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>生きのびた時間とレベルを表示する</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>R キー ／ T キーが押された（GameOver・Clear）</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>もう一度あそぶ ／ タイトルへもどる</div>
+      </div>
+    </div>
+
+    <h2>6-2. 結果を次のシーンにわたそう</h2>
+    <div class="step">
+      <span class="step-num">1</span><span class="step-title">グローバル変数を作る</span>
+      <p>左上の「<strong>≡</strong>」を押して、プロジェクトマネージャーを開きます。<br>
+        「Game settings」の「<strong>Global variables</strong>」を押すと、「Global variables」の画面が開きます。<br>
+        「Add variable」で次の2つを作り、「Apply」を押します。</p>
+      <ul>
+        <li><code>LastTime</code>（生きのびた時間）… Number、値は <code>0</code></li>
+        <li><code>LastLevel</code>（最後のレベル）… Number、値は <code>1</code></li>
+      </ul>
+      <figure class="figure">
+        <a href="img/ch6-01_global-vars.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-01_global-vars.jpg" alt="プロジェクトマネージャーのGlobal variables（赤枠）と、LastTime 0、LastLevel 1（赤枠）" loading="lazy"></a>
+        <figcaption>「Global variables」（赤枠）に LastTime と LastLevel（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">グローバル変数</span> … プロジェクト全体で1つだけある変数。<br>
+      シーン変数は、シーンが変わるとリセットされてしまいます。<br>
+      グローバル変数ならシーンが変わっても残るので、Game Scene の結果を GameOver の画面で表示できます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span><span class="step-title">やられたとき・ボスをたおしたときに結果を入れる</span>
+      <p>「Game Scene (Events)」の UI グループで、「PlayerHealth ≤ 0」のイベントを直します。<br>
+        「Change the scene」より<strong>上</strong>に、アクションを2つ足します。</p>
+      <ul>
+        <li>「Change variable value」で <code>LastTime</code> を「= (set to)」<code>Elapsed</code></li>
+        <li>「Change variable value」で <code>LastLevel</code> を「= (set to)」<code>Level</code></li>
+      </ul>
+      <p>「Change the scene」は、シーンを <code>"GameOver"</code> に変えます。<br>
+        ただ、GameOver のシーンはまだないので、一覧からは選べません。<br>
+        先に次の手順3でシーンを作ってから、ここにもどって、ダブルクリックで <code>"GameOver"</code> に直そう。</p>
+      <figure class="figure">
+        <a href="img/ch6-02b_to-gameover.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-02b_to-gameover.jpg" alt="PlayerHealth ≤ 0 で、LastTime、LastLevel を入れて GameOver へ（赤枠）" loading="lazy"></a>
+        <figcaption>やられたら結果を入れて "GameOver" へ（赤枠）</figcaption>
+      </figure>
+      <p>Boss グループの「The variable Health of Boss ≤ 0」のイベントにも、同じ2つのアクションを「Change to scene "Clear"」より上に足します。</p>
+    </div>
+
+    <h2>6-3. タイトル・ゲームオーバー・クリアの画面を作ろう</h2>
+    <div class="step">
+      <span class="step-num">3</span><span class="step-title">シーンを作る</span>
+      <p>プロジェクトマネージャーの「Scenes」の「＋」で、<code>Title</code> と <code>GameOver</code> を作ります。<br>
+        第5章で <code>Clear</code> を作っていない人は、ここで作ります。<br>
+        シーンの名前は、イベントの <code>"GameOver"</code> などと大文字・小文字まで同じにしよう。</p>
+      <figure class="figure">
+        <a href="img/ch6-02a_scenes.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-02a_scenes.jpg" alt="プロジェクトマネージャーのScenes。Game Scene、Title、GameOver、Clear（赤枠）" loading="lazy"></a>
+        <figcaption>シーンが4つになった（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span><span class="step-title">Title のシーンを作る</span>
+      <p>Title のシーンを開き、「Text」で3つの文字を作って置きます。<br>
+        右下の「Background color」を押すと、シーンの背景の色を変えられます（写真では、こい紺色）。</p>
+      <table>
+        <tr><th>名前</th><th>Initial text to display</th></tr>
+        <tr><td><code>TitleText</code></td><td>DUNGEON SURVIVOR（大きく、黄色）</td></tr>
+        <tr><td><code>InfoText</code></td><td>遊び方の説明（下の例）</td></tr>
+        <tr><td><code>StartText</code></td><td>Space キーでスタート（緑）</td></tr>
+      </table>
+      <div class="code-block"><span class="code-label">InfoText の例</span><button class="copy-btn" type="button">コピー</button><pre><code>ダンジョンにゴブリンがおしよせてくる！
+こうげきは自動。うごいて、よけて、生きのびよう。
+ゴブリンをたおすと出るジェムを集めるとレベルアップ。
+レベルアップしたら、3つの強化から1つをえらぼう。
+15分たつとボスが出てくる。ボスをたおせばクリア！
+
+WASD または 矢印キー：いどう</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch6-02_title-scene.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-02_title-scene.jpg" alt="TitleシーンにTitleText、InfoText、StartTextを置いたところ（赤枠）" loading="lazy"></a>
+        <figcaption>Title のシーンと、3つの文字のオブジェクト（赤枠）</figcaption>
+      </figure>
+      <p>「Title (Events)」を開き、イベントを1つ作ります。<br>
+        条件は「<strong>Key just pressed</strong>」で <code>Space</code>。<br>
+        アクションは「Change the scene」で <code>"Game Scene"</code>。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">5</span><span class="step-title">GameOver のシーンを作る</span>
+      <p>GameOver のシーンに、「Text」で3つの文字を作って置きます。<br>
+        背景色は、こい赤茶色などにすると雰囲気が出ます。</p>
+      <table>
+        <tr><th>名前</th><th>Initial text to display</th></tr>
+        <tr><td><code>GameOverText</code></td><td>GAME OVER（大きく、赤）</td></tr>
+        <tr><td><code>ResultText</code></td><td>（イベントで書きかえるので、何でもOK）</td></tr>
+        <tr><td><code>RetryText</code></td><td>R：もう一度あそぶ　　T：タイトルへ</td></tr>
+      </table>
+      <figure class="figure">
+        <a href="img/ch6-02c_gameover-scene.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-02c_gameover-scene.jpg" alt="GameOverシーンにGameOverText、ResultText、RetryText（赤枠）" loading="lazy"></a>
+        <figcaption>GameOver のシーンと、3つの文字のオブジェクト（赤枠）。<br>
+          ResultText は、GAME OVER と R：の間に置いています</figcaption>
+      </figure>
+      <p>「GameOver (Events)」に、イベントを3つ作ります。</p>
+      <table>
+        <tr><th>条件</th><th>アクション</th></tr>
+        <tr><td>（条件なし）</td><td><code>ResultText</code> の「Text」を「= (set to)」下の式</td></tr>
+        <tr><td>「Key just pressed」で <code>r</code></td><td>「Change the scene」で <code>"Game Scene"</code></td></tr>
+        <tr><td>「Key just pressed」で <code>t</code></td><td>「Change the scene」で <code>"Title"</code></td></tr>
+      </table>
+      <div class="code-block"><span class="code-label">ResultText の Text</span><button class="copy-btn" type="button">コピー</button><pre><code>"生きのびた時間 " + ToString(floor(LastTime / 60)) + "分" + ToString(mod(floor(LastTime), 60)) + "秒　レベル " + ToString(LastLevel)</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch6-03_gameover-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-03_gameover-events.jpg" alt="GameOverのイベント3つ（赤枠）" loading="lazy"></a>
+        <figcaption>GameOver のイベント3つ（赤枠）</figcaption>
+      </figure>
+      <p>時間の式は、第5章の「○分○秒」と同じ形で、Elapsed のかわりに LastTime を使っています。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">6</span><span class="step-title">Clear のシーンを作る</span>
+      <p>Clear のシーンも、GameOver と同じように作ります。<br>
+        文字は <code>ClearText</code>（「CLEAR!」、黄色）、<code>ClearInfoText</code>（「ボスをたおして、ダンジョンを生きのびた！」）、そして <code>RetryText</code> の3つ。<br>
+        背景色は、こい緑などがおすすめです。<br>
+        イベントは、GameOver の <code>r</code> と <code>t</code> の2つと同じです。<br>
+        GameOver (Events) で2つのイベントを選んでコピーし、Clear (Events) に貼り付けると早いよ。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">7</span><span class="step-title">Title を最初のシーンにする</span>
+      <p>プロジェクトマネージャーの「Scenes」で、<code>Title</code> の「⋮」を押し、「<strong>Set as start scene</strong>」を選びます。<br>
+        Title の横に<strong>旗マーク</strong>がつけば OK です（上の「シーンが4つになった」の写真を見てね）。<br>
+        これで、Preview やゲームを始めたとき、最初にタイトルが出ます。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">8</span><span class="step-title">操作説明 GuideText を置く</span>
+      <p>Game Scene にもどり、「Text」で <code>GuideText</code> を作ります。<br>
+        Initial text to display は「<strong>WASD または 矢印キー：いどう（こうげきは自動）</strong>」。<br>
+        UI レイヤーの左下（X <code>20</code>、Y <code>680</code> くらい）に置きます。<br>
+        ゲームの途中でも、遊び方がわかるようになります。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">9</span><span class="step-title">保存して、最初から通しで Preview</span>
+      <p>Preview すると、タイトルから始まります。<br>
+        Space キーでゲームが始まり、やられると GAME OVER の画面に、生きのびた時間とレベルが出ます。<br>
+        R でもう一度、T でタイトルにもどれば成功！<br>
+        クリアの画面は、BossTime を 60 にしてボスをたおしてたしかめよう（たしかめたら 900 にもどす）。</p>
+      <figure class="figure">
+        <a href="img/ch6-04_preview-title.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-04_preview-title.jpg" alt="Previewのタイトル画面。DUNGEON SURVIVOR、遊び方、Space キーでスタート" loading="lazy"></a>
+        <figcaption>タイトルの画面</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch6-05_preview-gameover.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-05_preview-gameover.jpg" alt="Previewのゲームオーバー画面。生きのびた時間 15分6秒 レベル 14" loading="lazy"></a>
+        <figcaption>ゲームオーバーの画面。<br>
+          生きのびた時間とレベルが出る</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch6-05b_preview-clear.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-05b_preview-clear.jpg" alt="Previewのクリア画面。CLEAR! ボスをたおして、ダンジョンを生きのびた！" loading="lazy"></a>
+        <figcaption>ボスをたおしたときのクリアの画面</figcaption>
+      </figure>
+    </div>
+
+    <h2>6-4. 数字を調整して、自分のゲームにしよう</h2>
+    <p>
+      このゲームは、変数や式の数を変えるだけで、遊びごたえが大きく変わります。<br>
+      下の表を見て、「どこを変えると何が変わるか」をたしかめながら調整しよう。<br>
+      <strong>1回に変えるのは1か所だけ</strong>にして、変えたらすぐ Preview で確認するのがコツです。
+    </p>
+    <table>
+      <tr><th>変えたいこと</th><th>どこを変える？</th><th>今の数</th></tr>
+      <tr><td>ゴブリンが出てくる間隔</td><td>Enemy の "EnemyTimer" の式 <code>max(0.15, 0.9 - Elapsed / 60 * 0.06)</code></td><td>はじめ 0.9 秒、1分ごとに 0.06 秒短く、いちばん短くて 0.15 秒</td></tr>
+      <tr><td>画面にいるゴブリンの最大数</td><td>「Number of object instances on the scene」の Value to compare</td><td>250</td></tr>
+      <tr><td>ゴブリンの速さ</td><td>Enemy の <code>min(220, 90 + Elapsed / 5)</code></td><td>はじめ 90、いちばん速くて 220</td></tr>
+      <tr><td>ゴブリンの体力・1回に出る数がふえるペース</td><td>Enemy の <code>1 + floor(Elapsed / 90)</code> の 90（2か所）</td><td>90秒ごと</td></tr>
+      <tr><td>ゴブリンにさわったときのダメージ</td><td>Enemy の <code>20 * TimeDelta()</code></td><td>1秒に 20</td></tr>
+      <tr><td>ボスが出てくる時間</td><td>シーン変数 <code>BossTime</code></td><td>900（15分）</td></tr>
+      <tr><td>ボスの体力</td><td>Boss のオブジェクト変数 <code>Health</code></td><td>150</td></tr>
+      <tr><td>ボスの速さ・ダメージ・大きさ</td><td>Boss の <code>75</code>、<code>40 * TimeDelta()</code>、Scale <code>9</code></td><td>75・40・9</td></tr>
+      <tr><td>ボスが出たあとのゴブリンの出かた</td><td>ボスを出すイベントの <code>SpawnFactor</code></td><td>3（間隔が3倍）</td></tr>
+      <tr><td>レベルアップのペース</td><td>シーン変数 <code>XPNext</code> と、<code>round(8 + Level * 6 + Level * Level * 0.5)</code></td><td>はじめ 8</td></tr>
+      <tr><td>ジェムを吸いよせる距離</td><td>シーン変数 <code>MagnetRange</code></td><td>150</td></tr>
+      <tr><td>最初のナイフの強さ</td><td>シーン変数 <code>KnifeCooldown</code>・<code>KnifeCount</code>・<code>KnifeDirs</code>・<code>KnifeDamage</code></td><td>1・1・1・1</td></tr>
+      <tr><td>強化の上限</td><td>反映のサブイベントの <code>max(0.3, …)</code>、<code>min(5, …)</code>、<code>min(8, …)</code></td><td>0.3 秒・5本・8方向</td></tr>
+      <tr><td>騎士の速さ・体力</td><td>シーン変数 <code>PlayerSpeed</code>、<code>PlayerHealth</code> と <code>MaxHealth</code></td><td>300・100</td></tr>
+    </table>
+
+    <div class="term">
+      <span class="word">調整のコツ</span> … 自分は作った人なので、ゲームがうまくなっています。<br>
+      「自分にはちょっとかんたん」くらいが、はじめて遊ぶ人にはちょうどいいことが多いです。<br>
+      ボスまでたどりつけるか確かめたいときは、BossTime を 60 にしてためそう（最後に 900 にもどすのを忘れずに）。
+    </div>
+
+    <h2>6-5. 今日の進め方</h2>
 
     <div class="figure">
       <svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="仕上げ計画からカスタマイズ、テストプレイ、発表準備、発表までの流れ">
@@ -76,11 +284,11 @@
           </marker>
         </defs>
       </svg>
-      <figcaption>図6-1: 今日の流れ。<br>
+      <figcaption>図6-1: 画面づくりが終わったら、この流れで仕上げる。<br>
         「作る → 遊んでもらう → 直す」を何回まわせるかが、作品の完成度を決める</figcaption>
     </div>
 
-    <h2>6-2. 仕上げ計画を立てよう</h2>
+    <h2>6-6. 仕上げ計画を立てよう</h2>
     <p>
       まずは、今日やりたいことを紙に書き出そう。<br>
       ポイントは、<strong>「絶対やること」と「時間があればやること」を分ける</strong>こと。<br>
@@ -90,12 +298,13 @@
     <h3>アイデア一覧（★が多いほどむずかしい）</h3>
     <table>
       <tr><th>アイデア</th><th>むずかしさ</th><th>使う知識（復習する章）</th></tr>
-      <tr><td>タイルマップで部屋や通路をふやす</td><td>★</td><td>第3章</td></tr>
-      <tr><td>ナイフを投げるときに音を鳴らす（下のワザ1）</td><td>★</td><td>第1章</td></tr>
-      <tr><td>ナイフが当たったゴブリンを赤くする（下のワザ2）</td><td>★</td><td>第2章</td></tr>
-      <tr><td>ゴブリンの速さ・体力・出てくる間かくを調整する</td><td>★★</td><td>第2章・第5章</td></tr>
-      <tr><td>ほかの敵や武器に入れかえる（Swap assets）</td><td>★★</td><td>第1章の「やってみよう」</td></tr>
-      <tr><td>ショップの商品をふやす</td><td>★★★</td><td>第5章の「やってみよう」</td></tr>
+      <tr><td>6-4 の表を見て、むずかしさを調整する</td><td>★</td><td>第3章〜第5章</td></tr>
+      <tr><td>ジェムを拾ったときやレベルアップのときに音を鳴らす</td><td>★</td><td>第2章（Play a sound）</td></tr>
+      <tr><td>タイトルやゲームオーバーの画面を自分らしくかざる</td><td>★</td><td>第6章</td></tr>
+      <tr><td>ゴブリンやボス、ナイフの見た目を入れかえる（Swap assets）</td><td>★★</td><td>第1章</td></tr>
+      <tr><td>クリアの画面にも、時間とレベルを出す</td><td>★★</td><td>第6章（ResultText の式）</td></tr>
+      <tr><td>7つ目の強化を足す</td><td>★★★</td><td>第4章の「やってみよう」</td></tr>
+      <tr><td>2種類目の敵を作る（Goblin を複製して、速さや体力を変える）</td><td>★★★</td><td>第3章・第5章のボス</td></tr>
     </table>
 
     <div class="challenge">
@@ -115,92 +324,19 @@
       </details>
     </div>
 
-    <h2>6-3. 仕上げに使えるワザ集</h2>
-    <p>
-      ここからは、仕上げでよく使うワザを紹介します。<br>
-      全部やる必要はありません。<br>
-      自分の計画に必要なものだけ使おう。
-    </p>
-
-    <h3>ワザ1: ナイフを投げるときに音を鳴らす</h3>
-    <div class="step">
-      <span class="step-num">1</span><span class="step-title">「Play a sound」で効果音をつける</span>
-      <p>イベントシートの Knife グループで、ナイフを投げるイベント（左クリックをはなした）の「Add action」を押します。<br>
-        <code>play a sound</code> で検索して「<strong>Play a sound</strong>」を選びます。<br>
-        「Choose the audio file to use」の欄をクリックして、「<strong>Choose from asset store</strong>」を押そう。</p>
-      <figure class="figure">
-        <a href="img/ch6-01_play-sound.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-01_play-sound.jpg" alt="Play a soundのアクション。Choose from asset store（赤枠）" loading="lazy"></a>
-        <figcaption>「Play a sound」→「Choose from asset store」（赤枠）</figcaption>
-      </figure>
-      <p>検索欄に <code>throw</code> と入力すると、「<strong>sfx_throw.ogg</strong>」（作者: Kenney、CC0）が出てきます。<br>
-        左の ▷ を押すと、音をためしに聞けます。<br>
-        選んで「<strong>Add to project</strong>」を押します。</p>
-      <figure class="figure">
-        <a href="img/ch6-02_throw-sound.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-02_throw-sound.jpg" alt="New resourceの画面でthrowと検索し、sfx_throw.oggを選んでAdd to project（赤枠）" loading="lazy"></a>
-        <figcaption><code>throw</code> で検索 → 音を選んで「Add to project」（赤枠）</figcaption>
-      </figure>
-      <p>もとの画面にもどったら、Volume（音の大きさ）に <code>50</code> と入れて「Ok」。</p>
-      <figure class="figure">
-        <a href="img/ch6-03_sound-volume.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-03_sound-volume.jpg" alt="選んだ音とVolume 50（赤枠）" loading="lazy"></a>
-        <figcaption>選んだ音と、Volume <code>50</code>（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch6-04_sound-event.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-04_sound-event.jpg" alt="Knifeグループのナイフを投げるイベントに、Play the soundが入ったところ（赤枠）" loading="lazy"></a>
-        <figcaption>投げるイベントに音が入った（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="trouble">
-      <h4>音を選ぶときは「ライセンス」も見よう</h4>
-      <p>音の名前の下に「CC0 (public domain)」や「CC-BY 4.0」と書いてあります。<br>
-        CC0 は自由に使える素材です。<br>
-        CC-BY は、使うときに作った人の名前（クレジット）を書く約束がある素材です。<br>
-        まよったら CC0 のものを選ぼう。</p>
-    </div>
-
-    <h3>ワザ2: ナイフが当たったゴブリンを赤くする</h3>
-    <div class="step">
-      <span class="step-num">2</span><span class="step-title">「Tint color」で色をつける</span>
-      <p>Enemy グループの「Knife is in collision with Goblin」のイベントに、アクションを足します。<br>
-        <code>tint</code> で検索 →「<strong>Tint color</strong>」（General › Sprite のもの）、Object は <code>Goblin</code>、Tint は <code>"255;80;80"</code>。<br>
-        1回当たったゴブリンが赤っぽくなり、「あと1回で倒せる」とわかるようになります。</p>
-      <figure class="figure">
-        <a href="img/ch6-05_tint.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-05_tint.jpg" alt="Tint colorのアクション。Goblin、&quot;255;80;80&quot;（赤枠）" loading="lazy"></a>
-        <figcaption>Goblin を赤っぽくする（赤枠）</figcaption>
-      </figure>
-      <figure class="figure">
-        <a href="img/ch6-07_preview-red.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-07_preview-red.jpg" alt="Previewで、ナイフが当たったゴブリンが赤くなっている（赤枠）" loading="lazy"></a>
-        <figcaption>騎士にさわっている、赤くなったゴブリン（赤枠）</figcaption>
-      </figure>
-    </div>
-
-    <div class="term">
-      <span class="word">"255;80;80"</span> … 色を「赤;緑;青」の3つの数（0〜255）で表したもの。<br>
-      "255;255;255" は白（もとの色のまま）です。<br>
-      赤だけ大きくすると、赤っぽい色になります。
-    </div>
-
-    <h3>ワザ3: ステージを広げる・敵の種類をふやす</h3>
-    <div class="step">
-      <span class="step-num">3</span><span class="step-title">これまでのやり方を組み合わせる</span>
-      <p>部屋や通路は、第3章と同じやり方でタイルマップをぬって、壁を置けばふやせます。<br>
-        ステージを広げたら、ゴブリンが出てくる場所（RandomInRange の数字）も合わせて変えよう。<br>
-        ほかの敵にしたいときは、一覧の Goblin の「⋮」→「<strong>Swap assets</strong>」で見た目だけ入れかえられます。<br>
-        Dungeon のパックには、オークやスケルトンなどもいます。</p>
-    </div>
-
-    <h2>6-4. テストプレイしてもらおう</h2>
+    <h2>6-7. テストプレイしてもらおう</h2>
     <p>
       ある程度できたら、<strong>となりの人と交換して遊んでもらおう</strong>。<br>
       遊んでもらうときは、作った人は<strong>説明しないで、だまって見ている</strong>のがコツです。<br>
-      説明しないとわからない部分は、ゲームの中でわかるように直すべき部分だからです。
+      説明しないとわからない部分は、ゲームの中でわかるように直すべき部分だからです。<br>
+      タイトルの説明文や GuideText が役に立っているか、よく見ておこう。
     </p>
 
     <table>
       <tr><th>遊んだ人に聞くこと</th><th>メモ</th></tr>
       <tr><td>遊び方は、説明なしでわかった？</td><td></td></tr>
-      <tr><td>むずかしすぎた場所・かんたんすぎた場所は？</td><td></td></tr>
-      <tr><td>いちばん楽しかったところは？</td><td></td></tr>
+      <tr><td>むずかしすぎた・かんたんすぎたところは？</td><td></td></tr>
+      <tr><td>いちばん楽しかったところは？（好きな強化は？）</td><td></td></tr>
       <tr><td>バグ（おかしな動き）はあった？</td><td></td></tr>
     </table>
 
@@ -210,13 +346,13 @@
       直したら、もう一度遊んでもらって「良くなった？」と聞いてみよう。</p>
       <details class="hint">
         <summary>ヒントを見る</summary>
-        <p>「むずかしすぎる」と言われたら、ゴブリンをおそくする・出てくる間かくを長くする・体力のへり方をゆっくりにする、など直し方はいろいろ。<br>
+        <p>「むずかしすぎる」と言われたら、6-4 の表から、ゴブリンをおそくする・出てくる間隔を長くする・ダメージを小さくする、など直し方を選ぼう。<br>
           全部の意見に従う必要はないよ。<br>
           自分の「こだわり」とぶつかる意見は、取り入れなくてもOK。</p>
       </details>
     </div>
 
-    <h2>6-5. 発表の準備をしよう</h2>
+    <h2>6-8. 発表の準備をしよう</h2>
     <p>
       発表では、ゲームを遊んで見せながら、次の順番で話すと伝わりやすくなります。<br>
       1人の持ち時間は講師が伝えます。
@@ -225,10 +361,10 @@
     <table>
       <tr><th>順番</th><th>話すこと</th><th>例</th></tr>
       <tr><td>1</td><td>ゲームの名前</td><td>「〇〇〇という名前のゲームです」</td></tr>
-      <tr><td>2</td><td>どんなゲームか・遊び方</td><td>「ナイフを投げてゴブリンを倒し、ウェーブを生きのびるゲームです」</td></tr>
-      <tr><td>3</td><td>いちばんのこだわり</td><td>「タイルマップで、迷路みたいなダンジョンにしました」</td></tr>
-      <tr><td>4</td><td>苦労したこと・どう解決したか</td><td>「ゴブリンが壁をすりぬけるバグがあって、Separate objects を足して直しました」</td></tr>
-      <tr><td>5</td><td>次にやってみたいこと</td><td>「ボスゴブリンを出したいです」</td></tr>
+      <tr><td>2</td><td>どんなゲームか・遊び方</td><td>「ナイフが自動で飛ぶので、動いてゴブリンをよけながらジェムを集め、15分後のボスをたおすゲームです」</td></tr>
+      <tr><td>3</td><td>いちばんのこだわり</td><td>「後半はゴブリンがすごい数になるように調整して、ハラハラするようにしました」</td></tr>
+      <tr><td>4</td><td>苦労したこと・どう解決したか</td><td>「ボスが何体も出てくるバグがあって、BossSpawned の条件を入れわすれていたのを見つけて直しました」</td></tr>
+      <tr><td>5</td><td>次にやってみたいこと</td><td>「2種類目の敵と、新しい武器を作りたいです」</td></tr>
     </table>
 
     <div class="challenge">
@@ -243,27 +379,29 @@
       </details>
     </div>
 
-    <h2>6-6. 作品の公開について（任意）</h2>
+    <h2>6-9. 作品の公開について（任意）</h2>
     <p>
       GDevelopには、作ったゲームをインターネットで遊べるように公開する機能があります。<br>
       画面の上の真ん中にある「<strong>Share</strong>」ボタンを押すと、公開のしかたを選ぶ画面が開きます。<br>
       いちばん上の「<strong>gd.games</strong>」（Easiest＝いちばんかんたん）を使うと、遊べるURLが作れます。<br>
       公開すると、家族や友だちにURLを送って遊んでもらえます。<br>
-      ただし、<strong>公開は講師の確認が終わってから</strong>にしてください。
+      ただし、<strong>公開は講師の確認が終わってから</strong>にしてください。<br>
+      公開する前に、BossTime が 900 にもどっているかも確かめよう。
     </p>
     <ul>
       <li>ゲームの中やタイトル・説明文に、<strong>本名・学校名・住所など</strong>を書かない</li>
       <li>アセットストアの無料素材や自分で作った素材だけを使っているか、もう一度確認する</li>
-      <li>この教科書で使った「Dungeon」（0x72）、体力バー、ドクロ、効果音は CC0 なので、クレジットは書かなくてもOK。<br>
+      <li>この教科書で使った「Dungeon」（0x72）、体力バー、ドクロ、ジェム、効果音は CC0 なので、クレジットは書かなくてもOK。<br>
         自分で CC-BY の素材を追加したときは、作った人の名前（クレジット）をゲームの中や説明文に書く</li>
       <li>公開するかどうかは、保護者の方とも相談して決める</li>
     </ul>
     <figure class="figure">
       <a href="img/ch6-06_share.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch6-06_share.jpg" alt="上の「Share」ボタンを押すと開くShareの画面。gd.gamesで公開できる（講師の確認が終わってから）" loading="lazy"></a>
-      <figcaption>上の「Share」ボタンを押すと開くShareの画面。gd.gamesで公開できる（講師の確認が終わってから）</figcaption>
+      <figcaption>上の「Share」ボタンを押すと開くShareの画面。<br>
+        gd.gamesで公開できる（講師の確認が終わってから）</figcaption>
     </figure>
 
-    <h2>6-7. この先の3つの道</h2>
+    <h2>6-10. この先の3つの道</h2>
     <p>
       全6回の導入はこれでおしまい。<br>
       ここから先は、<strong>自分で進む道を選びます</strong>。<br>
@@ -312,13 +450,34 @@
       まだ決められない人は、「作ってみたいもの」をひとつ考えてくるだけでもOKです。
     </p>
 
-    <h2>6-8. 🚨 つまずきポイント集</h2>
+    <h2>6-11. 🚨 つまずきポイント集</h2>
+
+    <div class="trouble">
+      <h4>Preview してもタイトルが出ない（いきなりゲームが始まる）</h4>
+      <p><strong>原因:</strong> Title が開始シーンになっていない。</p>
+      <p><strong>直し方:</strong> プロジェクトマネージャーで、Title の横に旗マークがついているか確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>ゲームオーバーの画面で「0分0秒 レベル 1」になる</h4>
+      <p><strong>原因:</strong> LastTime・LastLevel を入れるアクションがない、または LastTime・LastLevel をグローバル変数ではなくシーン変数に作ってしまった。<br>
+        シーン変数は、シーンが変わるとリセットされます。</p>
+      <p><strong>直し方:</strong> 「PlayerHealth ≤ 0」のイベントに2つのアクションがあるか確かめよう。<br>
+        プロジェクトマネージャーの「Global variables」に LastTime と LastLevel があるかも確かめよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>R や T、Space を押しても何も起きない</h4>
+      <p><strong>原因:</strong> 条件をそのシーン以外のイベントに作った、またはシーンの名前がちがう。</p>
+      <p><strong>直し方:</strong> GameOver の条件は「GameOver (Events)」に作ろう。<br>
+        <code>"Game Scene"</code>、<code>"Title"</code> など、シーンの名前は大文字・小文字・空白まで同じか確かめよう。</p>
+    </div>
 
     <div class="trouble">
       <h4>いろいろ変えていたら、急にゲームがおかしくなった</h4>
       <p><strong>原因:</strong> 最後に変えたところが原因のことがほとんど。</p>
       <p><strong>直し方:</strong> まず <span class="os-win"><code>Ctrl + Z</code></span><span class="os-mac"><code>⌘ + Z</code></span> で1つずつ戻して、どこで直るか確かめよう。<br>
-        これからは「1つ変えたらPreviewで確認」をくせにしよう。</p>
+        これからは「1つ変えたら Preview で確認」をくせにしよう。</p>
     </div>
 
     <div class="trouble">
@@ -327,24 +486,11 @@
       <p><strong>直し方:</strong> 発表の15分前からは、新しいしかけを作るのはやめて、テストプレイと発表練習だけにしよう。<br>
         <span class="os-win"><code>Ctrl + S</code></span><span class="os-mac"><code>⌘ + S</code></span> の保存も忘れずに。</p>
     </div>
-    <div class="trouble">
-      <h4>音が鳴らない</h4>
-      <p><strong>原因1:</strong> PC やブラウザの音量が0、またはミュートになっている。<br>
-      → 右下の音量や、ブラウザのタブのスピーカーのマークを確かめよう。</p>
-      <p><strong>原因2:</strong> Play a sound を、ナイフを投げるイベントではないイベントに入れてしまった。<br>
-      → 「左クリックをはなした」の条件があるイベントに入っているか確かめよう。</p>
-    </div>
-
-    <div class="trouble">
-      <h4>ゴブリンが赤くならない</h4>
-      <p><strong>原因:</strong> Tint の色を、ダブルクォーテーション（"）でかこんでいない。</p>
-      <p><strong>直し方:</strong> <code>"255;80;80"</code> のように、前とうしろに " をつけよう。</p>
-    </div>
 
     <p>💡 15分たっても直らないときは、次の「AIを味方につけよう」の方法で相談してみよう。<br>
       発表の日は時間が限られているので、早めに講師を呼ぶのもアリです。</p>
 
-    <h2>6-9. 🤖 AIを味方につけよう</h2>
+    <h2>6-12. 🤖 AIを味方につけよう</h2>
     <p>
       最終回のAIの使い方は、<strong>「作品をもっと良くするための相談相手」</strong>。<br>
       ただし、作品と発表の主役はキミです。
@@ -354,18 +500,19 @@
       <h3>この章でのAIの使い所</h3>
       <p><span class="ai-ok">✅ 良い使い方</span> — 自分で考えたものを、もっと良くするために聞く</p>
       <ul>
+        <li><strong>調整の相談:</strong> 「後半がむずかしすぎる」など、今の数と困っていることを伝えて、どの数を変えるとよいか考えてもらう（変えるのは自分）</li>
         <li><strong>発表原稿のチェック:</strong> 自分で書いた原稿を見せて、わかりにくいところを指摘してもらう</li>
         <li><strong>この先の道の相談:</strong> 自分の興味を伝えて、どんな技術があるか教えてもらう（選ぶのは自分）</li>
       </ul>
       <p>そのままコピペで使えるプロンプト（AIへの指示文）の例:</p>
       <div class="prompt-example">
         中学生です。<br>
-        GDevelopで作ったローグライクゲームの発表原稿を書きました。<br>
+        GDevelopで作ったサバイバルゲームの発表原稿を書きました。<br>
         書き直さずに、「聞いている人にわかりにくいところ」を3つだけ指摘してください。<br>
         （ここに自分の原稿をはりつける）
       </div>
       <div class="prompt-example">
-        GDevelopでローグライクゲームを1本作り終えた中学生です。<br>
+        GDevelopでサバイバルゲームを1本作り終えた中学生です。<br>
         次は「〇〇〇（作ってみたいもの）」を作ってみたいです。<br>
         どんな技術や道具があるか、中学生でも始めやすい順に3つ教えてください。<br>
         それぞれの良いところと大変なところも教えてください。
@@ -379,29 +526,31 @@
       </ul>
     </div>
 
-    <h2>6-10. ✅ チェックリスト</h2>
+    <h2>6-13. ✅ チェックリスト</h2>
     <div class="checklist">
-      <label><input type="checkbox"> 仕上げ計画（絶対やること・時間があればやること・こだわり）を書いた</label>
-      <label><input type="checkbox"> 計画の「絶対やること」を作り終えた</label>
+      <label><input type="checkbox"> グローバル変数 LastTime・LastLevel を作り、やられたとき・クリアしたときに入れた</label>
+      <label><input type="checkbox"> Title・GameOver・Clear のシーンを作り、Title を開始シーンにした</label>
+      <label><input type="checkbox"> タイトル → ゲーム → ゲームオーバー（またはクリア）→ もう一度、と通しで遊べる</label>
+      <label><input type="checkbox"> GuideText で、ゲーム中にも操作がわかるようにした</label>
+      <label><input type="checkbox"> 数字を調整して、自分の好きなむずかしさにした（BossTime は 900 にもどした）</label>
       <label><input type="checkbox"> 人にテストプレイしてもらい、意見をもとに1か所以上直した</label>
       <label><input type="checkbox"> 発表で、こだわりと苦労したことを話せた</label>
-      <label><input type="checkbox"> 最後に保存して、最初から通しで遊べることを確認した</label>
       <label><input type="checkbox"> この先の3つの道のどれに進みたいか考えた</label>
     </div>
     <p>全部チェックできたら、ローグライク編 完全クリア！<br>
       🎉 スターターから、自分の力でゲームを1本に仕上げました。<br>
       ここで身につけた力を持って、次の道へ進もう。</p>
 
-    <h2>6-11. 📚 もっと知りたい人へ</h2>
+    <h2>6-14. 📚 もっと知りたい人へ</h2>
     <ul>
-      <li><a href="https://wiki.gdevelop.io/gdevelop5/objects/tilemap/" target="_blank">公式Wiki「Tilemap」（英語）</a> — 第3章のタイルマップのくわしい説明</li>
+      <li><a href="https://wiki.gdevelop.io/gdevelop5/all-features/variables/" target="_blank">公式Wiki「Variables」（英語）</a> — シーン変数・グローバル変数・配列のくわしい説明</li>
       <li><a href="https://wiki.gdevelop.io/gdevelop5/all-features/audio/" target="_blank">公式Wiki「Audio」（英語）</a> — 効果音や BGM の鳴らし方</li>
       <li><a href="https://wiki.gdevelop.io/gdevelop5/" target="_blank">GDevelop公式Wiki</a> — 「Publishing」のページに公開のくわしい説明がある（公開は講師確認後に）</li>
       <li><a href="https://gdevelop.io/" target="_blank">GDevelop公式サイト</a> — ほかの人が作ったゲームも見つかる</li>
     </ul>
 
     <nav class="chapter-nav">
-      <a href="chapter5.html">← 第5章 ウェーブとショップ</a>
+      <a href="chapter5.html">← 第5章 だんだん強くなる敵とボス</a>
       <a href="index.html">目次へもどる →</a>
     </nav>
   </main>

@@ -34,6 +34,7 @@
         <li>3Dのスターター（ひな形）から新しいプロジェクトを作れる</li>
         <li>3Dの画面と2Dの画面を切りかえて、ものを置ける</li>
         <li>道路と建物を並べて、自分の街を作れる</li>
+        <li>「Swap assets」で、主人公を人の形のキャラに入れかえられる</li>
       </ul>
     </div>
 
@@ -119,6 +120,7 @@
       </table>
       <p>矢印キーでは歩かないので注意してね。<br>
         オレンジのカプセルが、このゲームの主人公（<code>Player</code>）です。<br>
+        このカプセルは、この章の後半で人の形のキャラに入れかえます。<br>
         箱を押したり、コインを集めたりもできるので、少し遊んでみよう。<br>
         遊び終わったら、ゲームのタブを閉じてエディタにもどります。</p>
       <figure class="figure">
@@ -319,15 +321,73 @@
         建物がうまくクリックできないときは、右の一覧で右クリックして「<strong>Select instances on scene</strong>」で選べます。</p>
     </div>
 
-    <h2>1-9. 自分の街を歩こう</h2>
+    <h2>1-9. 主人公を人の形にしよう</h2>
+    <p>
+      今の主人公（<code>Player</code>）は、オレンジのカプセルです。<br>
+      街を歩くのにぴったりな、人の形のキャラに入れかえます。<br>
+      ここで使うのは「<strong>Swap assets</strong>」（素材を入れかえる）という機能です。<br>
+      名前・ビヘイビア・イベントはそのままで、見た目（3Dモデル）だけを別の素材に入れかえられます。
+    </p>
+
     <div class="step">
-      <span class="step-num">17</span><span class="step-title">保存して、Previewで歩く</span>
+      <span class="step-num">17</span><span class="step-title">「Swap assets」を開く</span>
+      <p>右の一覧の <code>Player</code> の右にある「<strong>⋮</strong>」を押します（<code>Player</code> を右クリックしても、同じメニューが出ます）。<br>
+        メニューの中から「<strong>Swap assets</strong>」を選びます。</p>
+      <figure class="figure">
+        <a href="img/ch1-13_swap-menu.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-13_swap-menu.jpg" alt="Objectsの一覧のPlayer（赤枠）の「⋮」のメニュー。Swap assets（赤枠）を選ぶ" loading="lazy"></a>
+        <figcaption>「Player」（上の赤枠）の「⋮」→「Swap assets」（下の赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、トラックや画面の文字など、あとの章で作るものも写っている</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">18</span><span class="step-title">Survivor Male B と交換する</span>
+      <p>「<strong>Swap Player with another asset</strong>」の画面が開きます。<br>
+        上の検索の欄に <code>survivor</code> と入力します。<br>
+        「<strong>Survivor Male B</strong>」を押すと、説明の画面に変わります。<br>
+        名前の横が「<strong>by Kenney</strong>」（作った人は Kenney）になっていることを確かめて、右下の「<strong>Swap</strong>」を押します。<br>
+        交換のあとに確認の画面が出たら、そのまま進めてOK。<br>
+        ビヘイビアやイベントは、そのまま残ります。</p>
+      <figure class="figure">
+        <a href="img/ch1-14_search-survivor.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-14_search-survivor.jpg" alt="Swap Player with another assetの画面。検索の欄にsurvivor（赤枠）と入れ、Survivor Male B（赤枠）を選ぶ" loading="lazy"></a>
+        <figcaption><code>survivor</code> で検索（上の赤枠）して、「Survivor Male B」（赤枠）を選ぶ</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch1-15_swap-survivor.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-15_swap-survivor.jpg" alt="Survivor Male Bの説明画面。by Kenney（赤枠）、Type of LicenseはCC0。右下のSwap（赤枠）を押す" loading="lazy"></a>
+        <figcaption>「Survivor Male B　by Kenney」（左上の赤枠）を確かめて、右下の「Swap」（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">19</span><span class="step-title">主人公の大きさを決める</span>
+      <p>右の一覧の <code>Player</code> をクリックします。<br>
+        左の Properties の「<strong>3D model</strong>」が「Survivor Male B.glb」になっていれば、入れかえ成功です。<br>
+        「<strong>Default size</strong>」の <strong>Width</strong>・<strong>Height</strong>・<strong>Depth</strong> を、全部 <code>70</code> にします。<br>
+        その下の「<strong>Reduce initial dimensions to keep aspect ratio</strong>」（形をくずさずに小さくする）は、ON のままでOK。</p>
+      <figure class="figure">
+        <a href="img/ch1-16_player-size.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-16_player-size.jpg" alt="PlayerのProperties。3D modelがSurvivor Male B.glb（赤枠）、Default sizeのWidth・Height・Depthが70（赤枠）。右の一覧でPlayer（赤枠）を選んでいる" loading="lazy"></a>
+        <figcaption>「3D model」が Survivor Male B.glb（上の赤枠）になったのを確かめて、「Default size」を全部 <code>70</code> に（まん中の赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったもの</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">Survivor Male B</span> … Kenney さんが作った、人の形の3Dキャラ。<br>
+      ライセンスは <strong>CC0</strong> なので、自由に使えます。<br>
+      「Idle」（立っている）・「Run」（走る）・「Jump」（ジャンプ）の3つのアニメーション（動き）が、はじめから入っています。<br>
+      走るときと止まるときで動きを切りかえるしくみは、第2章で作ります。
+    </div>
+
+    <h2>1-10. 自分の街を歩こう</h2>
+    <div class="step">
+      <span class="step-num">20</span><span class="step-title">保存して、Previewで歩く</span>
       <p>左上の保存のボタン（💾）を押して保存します。<br>
         「<strong>Preview</strong>」を押して、自分の作った街を歩いてみよう。<br>
-        <code>W</code> で道路を進んで、十字路まで行けたら成功です！</p>
+        主人公が人の形になっていて、<code>W</code> で道路を進んで十字路まで行けたら成功です！</p>
       <figure class="figure">
-        <a href="img/ch1-12_preview-city.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-12_preview-city.jpg" alt="Previewで、道路の上に立つ主人公と、左右の建物" loading="lazy"></a>
-        <figcaption>道路と建物のある街ができた</figcaption>
+        <a href="img/ch1-17_preview-character.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch1-17_preview-character.jpg" alt="Previewで、道路の前に立つ人の形の主人公（赤枠）と、左右の建物" loading="lazy"></a>
+        <figcaption>人の形の主人公（赤枠）が街に立った。<br>
+          写真は完成したゲームで撮ったので、トラック・上の文字・HP・Kills・左下の操作説明は、あとの章で作るもの（今は出なくてOK）</figcaption>
       </figure>
       <p>建物にぶつかってもすり抜けてしまうのは、まだ「かたいもの」の設定をしていないからです。<br>
         これは第6章で直します。</p>
@@ -345,7 +405,7 @@
       </details>
     </div>
 
-    <h2>1-10. 🚨 つまずきポイント集</h2>
+    <h2>1-11. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
       <h4>3Dの画面で、ものをクリックしても選べない</h4>
@@ -381,7 +441,20 @@
       <p><strong>直し方:</strong> 何もない地面を1回クリックしてから、貼り付けよう。</p>
     </div>
 
-    <h2>1-11. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>主人公がとても大きい・とても小さい</h4>
+      <p><strong>原因:</strong> 交換したあと、主人公の大きさを決めていない。</p>
+      <p><strong>直し方:</strong> 手順19のとおり、<code>Player</code> の「Default size」の Width・Height・Depth を、全部 <code>70</code> にしよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>主人公がカプセルのまま変わらない</h4>
+      <p><strong>原因:</strong> 「Swap」を押す前に画面を閉じた、または別のオブジェクトで「Swap assets」をした。</p>
+      <p><strong>直し方:</strong> 右の一覧の <code>Player</code> の「⋮」から、もう一度「Swap assets」をやり直そう。<br>
+        左の Properties の「3D model」が「Survivor Male B.glb」になっていればOK。</p>
+    </div>
+
+    <h2>1-12. ✅ チェックリスト</h2>
     <div class="checklist">
       <label><input type="checkbox"> 3Dでは、位置が X・Y・Z の3つの数字で決まることがわかった</label>
       <label><input type="checkbox"> 3D Platformer のスターターから <code>my-zombie-city</code> を作れた</label>
@@ -389,10 +462,12 @@
       <label><input type="checkbox"> 2Dと3Dの画面を切りかえられた</label>
       <label><input type="checkbox"> いらないイベントとオブジェクトを片づけた</label>
       <label><input type="checkbox"> 道路をつなげて、建物を置いた</label>
-      <label><input type="checkbox"> Previewで、自分の街を歩けた</label>
+      <label><input type="checkbox"> 「Swap assets」で、主人公を Survivor Male B に入れかえて、大きさを 70 にした</label>
+      <label><input type="checkbox"> Previewで、人の形の主人公で自分の街を歩けた</label>
     </div>
     <p>全部チェックできたら第1章クリア！<br>
-      🎉 次回は、街にトラックを置いて、乗って運転できるようにするよ。</p>
+      🎉 次回は、街にトラックを置いて、乗って運転できるようにするよ。<br>
+      主人公が走るときの動き（アニメーション）もつけるよ。</p>
 
     <nav class="chapter-nav">
       <a href="chapter0.html">← 第0章 事前準備</a>

@@ -34,6 +34,8 @@
         <li>3Dの当たり判定（Collision in 3D）を使える</li>
         <li>タイマーで、何秒かごとにゾンビをわかせられる</li>
         <li>HP が 0 になったら、ゲームをやり直しにできる</li>
+        <li>式を使って、たおすほどゾンビが早くわいてくるようにできる</li>
+        <li>目標の数だけたおすと、ボスが出てくるしくみを作れる</li>
       </ul>
     </div>
 
@@ -41,7 +43,9 @@
     <p>
       ゾンビは弾を3発当てるとたおれます。<br>
       トラックでひいても、たおせます。<br>
-      たおした数を「Kills」として画面に出し、3秒ごとに新しいゾンビがわいてくるようにします。
+      たおした数を「Kills」として画面に出し、3秒ごとに新しいゾンビがわいてくるようにします。<br>
+      そのあと、たおすほどわいてくる間かくが短くなるようにします。<br>
+      最後に、ゾンビを20体たおすと大きなボスが出てきて、ボスをたおすとクリアの画面に進むようにします。
     </p>
     <div class="event-sheet">
       <div class="ev-label">この章で作るルール（まとめ）</div>
@@ -58,7 +62,7 @@
         <div class="ev-act"><span class="ev-head">アクション</span>ゾンビを消す<br>Kills を1ふやす</div>
       </div>
       <div class="ev-row">
-        <div class="ev-cond"><span class="ev-head">条件</span>タイマーが3秒をこえた</div>
+        <div class="ev-cond"><span class="ev-head">条件</span>タイマーが決めた秒数をこえた（はじめは3秒、たおすほど短くなる）</div>
         <div class="ev-act"><span class="ev-head">アクション</span>タイマーを0にもどす<br>ランダムな向きを決めて、そこにゾンビを作る</div>
       </div>
       <div class="ev-row">
@@ -72,6 +76,29 @@
       <div class="ev-row">
         <div class="ev-cond"><span class="ev-head">条件</span>HP が0以下</div>
         <div class="ev-act"><span class="ev-head">アクション</span>シーンを最初からやり直す</div>
+      </div>
+    </div>
+    <div class="event-sheet">
+      <div class="ev-label">ボスのルール（まとめ）</div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>20体たおした<br>ボスはまだ出ていない</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ボスを出した、にする<br>主人公から遠い場所にボスを作る<br>「ボスが来た！」と画面に出す</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>ボスが主人公から遠い</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ボスを主人公のほうへ動かす（歩く）</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>ボスが主人公に近い<br>乗っていない</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>パンチして HP を大きくへらす</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>弾がボスに当たった<br>トラックでボスをひいている</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>ボスの体力をへらす</div>
+      </div>
+      <div class="ev-row">
+        <div class="ev-cond"><span class="ev-head">条件</span>ボスの体力が0以下</div>
+        <div class="ev-act"><span class="ev-head">アクション</span>クリアの画面（シーン Clear）に進む</div>
       </div>
     </div>
 
@@ -215,7 +242,9 @@
       <span class="step-num">7</span><span class="step-title">3秒ごとに動くイベントを作る</span>
       <p><code>Shift + A</code> で新しいイベントを作ります。<br>
         条件は <code>タイマー</code> で検索して、シーンタイマーの経過時間を比べる条件「<strong>シーンタイマーの値</strong>」（その他の条件 › タイマーと時間）を選びます。<br>
-        タイマーの名称は <code>"SpawnTimer"</code>（ダブルクォーテーションもつける）、テスト記号は「≧（以上）」、時間（秒）は <code>3</code>。</p>
+        タイマーの名称は <code>"SpawnTimer"</code>（ダブルクォーテーションもつける）、テスト記号は「≧（以上）」、時間（秒）は <code>3</code>。<br>
+        この <code>3</code> は、あとの 5-8 で式に変えます。<br>
+        まずは 3 秒のまま作って、動くことを確かめよう。</p>
       <figure class="figure">
         <a href="img/ch5-10_spawn-timer.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-10_spawn-timer.jpg" alt="シーンタイマーの条件。タイマーの名称&quot;SpawnTimer&quot;、テスト記号≧（以上）、時間（秒）3（赤枠）" loading="lazy"></a>
         <figcaption>タイマー <code>"SpawnTimer"</code> が 3 秒以上（赤枠）</figcaption>
@@ -257,7 +286,7 @@
         アクションは「シーンタイマーをスタート（またはリセット）する」で <code>"SpawnTimer"</code>。</p>
     </div>
 
-    <h2>5-6. Kills とゲームオーバー</h2>
+    <h2>5-6. Kills と、やられたときのしくみ</h2>
 
     <div class="step">
       <span class="step-num">10</span><span class="step-title">Kills を画面に出す</span>
@@ -273,32 +302,24 @@
       <p><code>Shift + A</code> で新しいイベントを作ります。<br>
         条件は「変数の値」で <code>PlayerHealth</code>、テスト記号は「≦（以下）」、比較する値は <code>0</code>。<br>
         アクションは <code>シーンを変更</code> で検索 →「<strong>シーンを変更する</strong>」、新しいシーンの名前は一覧から「<strong>Game Scene</strong>」。<br>
-        今のシーンをもう一度始めるので、最初からやり直しになります。</p>
+        今のシーンをもう一度始めるので、最初からやり直しになります。<br>
+        第6章で「GAME OVER」の画面を作ったら、ここをその画面に進むように変えます。</p>
       <figure class="figure">
         <a href="img/ch5-13_restart.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-13_restart.jpg" alt="シーンを変更するのアクション。新しいシーンの名前でGame Sceneを選ぶ（赤枠）" loading="lazy"></a>
         <figcaption>「シーンを変更する」で、新しいシーンの名前に Game Scene を選ぶ（赤枠）</figcaption>
       </figure>
     </div>
 
-    <div class="step">
-      <span class="step-num">12</span><span class="step-title">できあがったイベントを確かめる</span>
-      <p>Battle グループの中が、下の写真と同じ7つのイベントになっていればOK。</p>
-      <figure class="figure">
-        <a href="img/ch5-14_battle-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-14_battle-events.jpg" alt="Battleグループの7つのイベント（赤枠）。Bullet is in collision with Zombie、Zombie の 変数 Health ≤ 0、変数 InCar は 真 である、シーンタイマー &quot;SpawnTimer&quot; ≥ 3 秒、シーンが始まった、条件なしで KillText のテキストを変更する、変数 PlayerHealth ≤ 0" loading="lazy"></a>
-        <figcaption>Battle グループの7つのイベント（赤枠）</figcaption>
-      </figure>
-    </div>
-
     <h2>5-7. たたかってみよう</h2>
     <div class="step">
-      <span class="step-num">13</span><span class="step-title">保存してプレビュー</span>
+      <span class="step-num">12</span><span class="step-title">保存してプレビュー</span>
       <p>保存してから「プレビュー」を押します。<br>
         ゾンビに弾を3発当てるとたおれて、左上の Kills がふえます。<br>
         トラックに乗って、ゾンビをひいてみよう。<br>
         3秒ごとにゾンビがふえていくので、どこまでたおせるかチャレンジ！</p>
       <figure class="figure">
         <a href="img/ch5-15_preview-kills.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-15_preview-kills.jpg" alt="プレビューで、Kills: 3（赤枠）。奥のゾンビに弾が飛んでいる（赤枠）" loading="lazy"></a>
-        <figcaption>弾を当ててたおすと Kills がふえる（赤枠）</figcaption>
+        <figcaption>弾を当ててたおすと Kills がふえる（赤枠）。</figcaption>
       </figure>
       <figure class="figure">
         <a href="img/ch5-16_preview-truck.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-16_preview-truck.jpg" alt="プレビューで、トラック（赤枠）にゾンビ（赤枠）が向かってくる。Kills: 6（赤枠）" loading="lazy"></a>
@@ -306,18 +327,237 @@
       </figure>
     </div>
 
+    <h2>5-8. だんだんむずかしくしよう</h2>
+    <p>
+      ずっと3秒ごとだと、なれてくると少しかんたんです。<br>
+      たおせばたおすほど、ゾンビがわいてくる間かくが短くなるようにします。
+    </p>
+
+    <div class="step">
+      <span class="step-num">13</span><span class="step-title">わく間かくを式にする</span>
+      <p>Battle グループの「シーンタイマー "SpawnTimer" ≥ 3 秒」の条件をダブルクリックして開きます。<br>
+        「時間（秒）」の <code>3</code> を消して、下の式を入れて「OK」。</p>
+      <div class="code-block"><span class="code-label">時間（秒）</span><button class="copy-btn" type="button">コピー</button><pre><code>max(1, 3 - Kills * 0.08)</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch5-22_ramp-dialog.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-22_ramp-dialog.jpg" alt="シーンタイマーの条件。タイマーの名称&quot;SpawnTimer&quot;、テスト記号≧（以上）、時間（秒）max(1, 3 - Kills * 0.08)（赤枠）" loading="lazy"></a>
+        <figcaption>「時間（秒）」を <code>max(1, 3 - Kills * 0.08)</code> にする（赤枠）。<br>
+          上のタブの Title などのシーンは、第6章で作るもの</figcaption>
+      </figure>
+      <figure class="figure">
+        <a href="img/ch5-21_spawn-ramp.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-21_spawn-ramp.jpg" alt="Battleグループ。シーンタイマー &quot;SpawnTimer&quot; ≥ max(1, 3 - Kills * 0.08) 秒 の部分（赤枠）" loading="lazy"></a>
+        <figcaption>イベントシートでは「シーンタイマー "SpawnTimer" ≥ max(1, 3 - Kills * 0.08) 秒」と出る（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">max(1, 3 - Kills * 0.08)</span> … <code>3 - Kills * 0.08</code> は、たおすたびに 0.08 秒ずつ短くなる時間。<br>
+      0体なら3秒、10体なら2.2秒、20体なら1.4秒です。<br>
+      ただ、このままだと25体をこえると1秒より短くなり、もっとたおすと0秒やマイナスになって、ゾンビがわきすぎてしまいます。<br>
+      <code>max(1, …)</code> は「2つのうち大きいほう」を選ぶ式なので、いちばん短くても1秒で止まります。
+    </div>
+
+    <div class="step">
+      <span class="step-num">14</span><span class="step-title">できあがったイベントを確かめる</span>
+      <p>Battle グループの中が、下の写真と同じ7つのイベントになっていればOK。</p>
+      <figure class="figure">
+        <a href="img/ch5-14_battle-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-14_battle-events.jpg" alt="Battleグループの7つのイベント（赤枠）。Bullet is in collision with Zombie、Zombie の 変数 Health ≤ 0、変数 InCar は 真 である、シーンタイマー &quot;SpawnTimer&quot; ≥ max(1, 3 - Kills * 0.08) 秒、シーンが始まった、条件なしで KillText のテキストを変更する、変数 PlayerHealth ≤ 0 のときシーン &quot;GameOver&quot; に変更する" loading="lazy"></a>
+        <figcaption>Battle グループの7つのイベント（赤枠）。<br>
+          写真は完成後のプロジェクトで撮ったので、いちばん下が「シーン "GameOver" に変更する」になっている。<br>
+          ここは第6章で変える部分なので、今は「シーン "Game Scene" に変更する」のままでOK。<br>
+          下の Player animation は、第2章で作ったグループ</figcaption>
+      </figure>
+    </div>
+
+    <h2>5-9. ボスの準備をしよう</h2>
+    <p>
+      ゾンビを20体たおすと、大きなボスが出てくるようにします。<br>
+      まずは、目標の数を入れる変数、画面の文字、ボスのオブジェクトを用意します。
+    </p>
+
+    <div class="step">
+      <span class="step-num">15</span><span class="step-title">シーン変数 Goal と BossSpawned を作る</span>
+      <p>シーンの何もないところをクリックして、「シーン変数」の編集画面（「Game Scene 変数」）を開きます。<br>
+        「変数を追加」で次の2つを作って、「適用」を押します。</p>
+      <ul>
+        <li><code>Goal</code> … 型は「数値」、値は <code>20</code>（ボスが出るまでにたおす数）</li>
+        <li><code>BossSpawned</code> … 型は「真偽値」、値は「偽」のまま（ボスをもう出したか）</li>
+      </ul>
+      <figure class="figure">
+        <a href="img/ch5-18_goal-vars.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-18_goal-vars.jpg" alt="「Game Scene 変数」の画面。Goal（数値、20）とBossSpawned（真偽値、偽）を追加したところ（赤枠）" loading="lazy"></a>
+        <figcaption><code>Goal</code>（数値・20）と <code>BossSpawned</code>（真偽値・偽）を追加（赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">16</span><span class="step-title">GoalText と BossHPText を作って置く</span>
+      <p>一覧の HealthText の「⋮」→「<strong>複製</strong>」で文字のオブジェクトを作り、名前を <code>GoalText</code> にします（ステップ3の KillText と同じやり方）。<br>
+        左のプロパティで、次のようにします。</p>
+      <ul>
+        <li>テキスト: <code>ゾンビを20体たおすと、ボスが出てくる！</code></li>
+        <li>フォントサイズ: <code>30</code></li>
+        <li>色: <code>255;235;80</code>（黄色）</li>
+      </ul>
+      <p>同じように HealthText を複製して <code>BossHPText</code> を作ります。</p>
+      <ul>
+        <li>テキスト: <code>BOSS HP: 40</code></li>
+        <li>フォントサイズ: <code>36</code></li>
+        <li>色: <code>255;80;80</code>（赤）</li>
+      </ul>
+      <p>レイヤーパネルで UI に●をつけてから、2つともシーンに置きます。<br>
+        GoalText は X <code>220</code>・Y <code>22</code>（画面の上）、BossHPText は X <code>990</code>・Y <code>20</code>（右上）にします。<br>
+        最後に、●を「ベースレイヤー」にもどしておこう。</p>
+      <figure class="figure">
+        <a href="img/ch5-17_goal-text.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-17_goal-text.jpg" alt="GoalTextのプロパティ。テキスト「ゾンビを20体たおすと、ボスが出てくる！」、フォントサイズ30、色255;235;80。シーンの上に置いたGoalTextとBossHPText（赤枠）と、右の一覧のGoalTextとBossHPText（赤枠）" loading="lazy"></a>
+        <figcaption>画面の上に GoalText、右上に BossHPText を置いた（まん中の赤枠）。<br>
+          左は GoalText のプロパティ。<br>
+          写真は完成後のプロジェクトで撮ったので、左下の操作説明（第6章で作る）も写っている</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">17</span><span class="step-title">ボスのオブジェクトを作る</span>
+      <p>一覧の Zombie の「⋮」→「<strong>複製</strong>」を選びます（第1章の「アセットの交換」と同じメニューの中にあります）。<br>
+        「Zombie2」ができて名前を入力できる状態になるので、<code>Boss</code> と入力して <code>Enter</code>。<br>
+        Boss をクリックして、左の「デフォルトのサイズ」の 幅・高さ・奥行き を全部 <code>210</code> にします（ゾンビの3倍）。<br>
+        左の「オブジェクト変数」には、複製でコピーされた <code>Health</code>（3）があるので、値を <code>40</code> にします。<br>
+        ボスはイベントで作り出すので、シーンには置かなくてOK。</p>
+      <figure class="figure">
+        <a href="img/ch5-19_boss-object.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-19_boss-object.jpg" alt="Bossのプロパティ。デフォルトのサイズの幅・高さ・奥行きが210（赤枠）、オブジェクト変数のHealthが40（赤枠）。右の一覧のBoss（赤枠）" loading="lazy"></a>
+        <figcaption>Boss の大きさを 210 に（上の赤枠）、オブジェクト変数 Health を 40 に（下の赤枠）</figcaption>
+      </figure>
+    </div>
+
+    <div class="step">
+      <span class="step-num">18</span><span class="step-title">Clear のシーンを先に作っておく</span>
+      <p>ボスをたおしたら「Clear」というシーンに進むようにします。<br>
+        Clear の中身（クリアの画面）は第6章で作りますが、イベントで選べるように、先にシーンだけ作っておきます。<br>
+        左上の「<strong>≡</strong>」（メニュー）を押して、プロジェクトマネージャーを開きます。<br>
+        「<strong>シーン</strong>」の右の「<strong>＋</strong>」を押すと、新しいシーンができます。<br>
+        できたシーンの「⋮」→「<strong>名前の変更</strong>」で、名前を <code>Clear</code> にします。<br>
+        終わったら、上のタブで「Game Scene (イベント)」にもどります。</p>
+      <p>くわしいやり方は、第6章の 6-2 にも写真つきでのっています。<br>
+        先に第6章の 6-2 の手順1をやっておいてもOK。</p>
+    </div>
+
+    <h2>5-10. ボスのイベントを作ろう</h2>
+    <p>
+      イベントシートで、新しいグループ <code>Boss</code> を作り（「+ 追加...」→「イベントグループ」）、<code>Shift + D</code> で中にイベントを作ります。<br>
+      第4章のゾンビや、この章の Battle とよく似たイベントです。
+    </p>
+
+    <div class="step">
+      <span class="step-num">19</span><span class="step-title">20体たおしたらボスを出す</span>
+      <p><strong>1つ目</strong>は、BOSS HP の文字を最初は見えなくしておくイベントです。<br>
+        条件は「シーンが始まった」、アクションは「非表示」で <code>BossHPText</code>。</p>
+      <p><strong>2つ目</strong>（<code>Shift + A</code>）が、ボスを出すイベントです。<br>
+        条件は2つ。</p>
+      <ul>
+        <li>「変数の値」で <code>Kills</code>、テスト記号は「≧（以上）」、比較する値は <code>Goal</code></li>
+        <li>「変数の値」で <code>BossSpawned</code> が「<strong>偽</strong>」</li>
+      </ul>
+      <p>アクションは5つ。</p>
+      <ul>
+        <li>「変数の値を変更」で <code>BossSpawned</code> を「<strong>真に設定</strong>」</li>
+        <li>「変数の値を変更」で <code>SpawnAngle</code> を「＝（代入）」で <code>RandomInRange(0, 359)</code></li>
+        <li>左の一覧で <code>Boss</code> を選び、「オブジェクトを生成する」。<br>
+          X 座標と Y 座標は下の式、レイヤーは「ベースレイヤー」のまま</li>
+        <li>「表示」で <code>BossHPText</code></li>
+        <li>GoalText の「テキスト」を、下の文字にする</li>
+      </ul>
+      <div class="code-block"><span class="code-label">X 座標</span><button class="copy-btn" type="button">コピー</button><pre><code>Player.X() + XFromAngleAndDistance(SpawnAngle, 900)</code></pre></div>
+      <div class="code-block"><span class="code-label">Y 座標</span><button class="copy-btn" type="button">コピー</button><pre><code>Player.Y() + YFromAngleAndDistance(SpawnAngle, 900)</code></pre></div>
+      <div class="code-block"><span class="code-label">GoalText のテキスト</span><button class="copy-btn" type="button">コピー</button><pre><code>"ボスが来た！ たおせばクリア！"</code></pre></div>
+      <figure class="figure">
+        <a href="img/ch5-20_boss-spawn.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-20_boss-spawn.jpg" alt="Bossグループ。シーンが始まったでBossHPText を非表示にする。変数 Kills ≥ Goal と 変数 BossSpawned は 偽 である のとき、BossSpawned を真に設定、SpawnAngle に RandomInRange(0, 359)、Boss のインスタンスを生成、BossHPText を表示、GoalText のテキストを変更（赤枠）" loading="lazy"></a>
+        <figcaption>ボスを出すイベント（赤枠）と、その上の「シーンが始まった」のイベント。<br>
+          写真の上のほうの Player animation は、第2章で作ったグループ</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">BossSpawned はなんのため？</span> … 「Kills ≧ Goal」は、20体たおしたあとずっと「はい」のままです。<br>
+      そのままだと、毎回（1秒に60回くらい）ボスが作られて、ボスだらけになってしまいます。<br>
+      ボスを作ったときに BossSpawned を「真」にして、条件に「BossSpawned が偽」を入れておくと、ボスは1回だけ作られます。
+    </div>
+
+    <div class="step">
+      <span class="step-num">20</span><span class="step-title">ボスが追いかけてきて、パンチする</span>
+      <p>第4章のゾンビと同じ作り方で、3つのイベントを作ります。</p>
+      <ul>
+        <li>条件なし →「別のオブジェクトに向けて回転させる」で、<code>Boss</code> を <code>Player</code> のほうへ、角速度 <code>0</code></li>
+        <li>「2つのオブジェクト間の距離」で <code>Boss</code> と <code>Player</code>、距離 <code>110</code>、「条件を反転」を ON →「オブジェクトに向かって移動するフォースを追加する」で <code>Boss</code> を <code>Player</code> へ速度 <code>60</code>（瞬間的）、「アニメーション名」で <code>Boss</code> を「Walk」</li>
+        <li>「2つのオブジェクト間の距離」で <code>Boss</code> と <code>Player</code>、距離 <code>110</code>（反転は OFF）と、「変数の値」で <code>InCar</code> が 偽 →「アニメーション名」で <code>Boss</code> を「Punch」、「変数の値を変更」で <code>PlayerHealth</code> を「－（引く）」で下の式</li>
+      </ul>
+      <div class="code-block"><span class="code-label">ボスのパンチでへらす量</span><button class="copy-btn" type="button">コピー</button><pre><code>35 * TimeDelta()</code></pre></div>
+      <p>ゾンビ（12）よりずっと強いパンチです。<br>
+        ボスは大きいので、近いと判断する距離も 110 にしています。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">21</span><span class="step-title">弾とトラックでボスの体力をへらす</span>
+      <p>弾が当たったときのイベントは、ステップ4と同じ作り方です。<br>
+        条件は、左の一覧で <code>Bullet</code> を選び、「Collision in 3D」で Other object は <code>Boss</code>。<br>
+        イベントシートには、日本語の画面でも英語のまま「Bullet is in collision with Boss」と表示されます。<br>
+        アクションは「オブジェクトを削除する」で <code>Bullet</code> と、<code>Boss</code> の「オブジェクト変数の値を変更」で <code>Health</code> を「－（引く）」で <code>1</code>。</p>
+      <p>トラックでひいたときのイベントも作ります。<br>
+        条件は「変数の値」で <code>InCar</code> が 真 と、「2つのオブジェクト間の距離」で <code>Boss</code> と <code>Truck</code>、距離 <code>160</code>。<br>
+        アクションは <code>Boss</code> の「オブジェクト変数の値を変更」で <code>Health</code> を「－（引く）」で下の式。</p>
+      <div class="code-block"><span class="code-label">トラックでへらす量</span><button class="copy-btn" type="button">コピー</button><pre><code>8 * TimeDelta()</code></pre></div>
+      <p>ゾンビは1回ひくとたおせましたが、ボスはトラックでひき続けている間、少しずつ体力がへっていきます。</p>
+    </div>
+
+    <div class="step">
+      <span class="step-num">22</span><span class="step-title">BOSS HP を出して、たおしたらクリアへ</span>
+      <p>BOSS HP の文字を変えるイベントを作ります。<br>
+        条件は「変数の値」で <code>BossSpawned</code> が 真。<br>
+        アクションは BossHPText の「テキスト」で、下の式を入れます。</p>
+      <div class="code-block"><span class="code-label">BossHPText に入れる式</span><button class="copy-btn" type="button">コピー</button><pre><code>"BOSS HP: " + ToString(max(0, ceil(Boss.Variable(Health))))</code></pre></div>
+      <p>最後に、ボスをたおしたときのイベントです。<br>
+        条件は、左の一覧で <code>Boss</code> を選び、「オブジェクト変数の値」で <code>Health</code>、テスト記号は「≦（以下）」、比較する値は <code>0</code>。<br>
+        アクションは「シーンを変更する」で、新しいシーンの名前は一覧から「<strong>Clear</strong>」。</p>
+      <figure class="figure">
+        <a href="img/ch5-23_boss-events.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-23_boss-events.jpg" alt="Bossグループの後半のイベント（赤枠）。Boss を Player 度に向けて回転、距離110で移動とWalk、距離110とInCar 偽でPunchと35 * TimeDelta()、Bullet is in collision with Boss、InCar 真と距離160で8 * TimeDelta()、BossSpawned 真でBossHPText のテキスト、Boss の Health ≤ 0 でシーン &quot;Clear&quot; に変更する" loading="lazy"></a>
+        <figcaption>Boss グループの後半の完成形（赤枠）。<br>
+          下に見える Truck hint は、第2章で作ったグループ</figcaption>
+      </figure>
+    </div>
+
+    <div class="term">
+      <span class="word">Boss.Variable(Health) と ceil()</span> … <code>Boss.Variable(Health)</code> は、ボスが持っているオブジェクト変数 Health を、式の中で読み出す書き方。<br>
+      トラックでひくと Health は 39.87 のように細かくへるので、<code>ceil()</code> で小数を切り上げて整数にします。<br>
+      <code>max(0, …)</code> は、マイナスの数が出ないようにするためです。
+    </div>
+
+    <h2>5-11. ボスとたたかってみよう</h2>
+    <div class="step">
+      <span class="step-num">23</span><span class="step-title">保存してプレビュー</span>
+      <p>保存してから「プレビュー」を押します。<br>
+        ゾンビを20体たおすと、上の文字が「ボスが来た！ たおせばクリア！」に変わり、大きなボスが出てきます。<br>
+        右上の BOSS HP が 0 になるまでたおすと、Clear のシーンに切りかわります。<br>
+        今は Clear のシーンが空っぽなので、何もない画面になればOK（クリアの画面は第6章で作ります）。</p>
+      <figure class="figure">
+        <a href="img/ch5-24_preview-boss.jpg" target="_blank" rel="noopener" title="クリックで大きく表示"><img src="img/ch5-24_preview-boss.jpg" alt="プレビューで、Kills: 20。上に「ボスが来た！ たおせばクリア！」（赤枠）、右上にBOSS HP: 40（赤枠）、大きなボス（赤枠）が出てきた" loading="lazy"></a>
+        <figcaption>20体たおすと、ボス（右の赤枠）が出てきた。<br>
+          上の文字が変わり、右上に BOSS HP が出る（上の赤枠）。<br>
+          左下の操作説明は、第6章で作るもの</figcaption>
+      </figure>
+      <p>20体たおすのは大変なので、ためすときはシーン変数の <code>Goal</code> を <code>2</code> などにすると早く確かめられます。<br>
+        確かめ終わったら、<code>Goal</code> を <code>20</code> にもどしておこう。</p>
+    </div>
+
     <div class="challenge">
       <h3>💪 やってみよう</h3>
-      <p>ゾンビの体力（3）、わく間かく（3秒）、わく距離（700）を変えてみよう。<br>
-        Kills が 10 をこえたら、わく間かくを短くして、だんだんむずかしくなるようにもできるよ。</p>
+      <p>ゾンビの体力（3）、わく距離（700）、ボスの体力（40）や大きさ（210）を変えてみよう。<br>
+        ボスが出るまでの数（Goal の 20）を変えて、ちょうどいいむずかしさにしてみよう。</p>
       <details class="hint">
         <summary>ヒント</summary>
-        <p>ステップ7の「3」のところに式を書くこともできます。<br>
-          たとえば <code>max(1, 3 - Kills * 0.1)</code> にすると、たおすほど間かくが短くなって、いちばん短くても1秒になります。</p>
+        <p><code>Goal</code> を変えたら、GoalText の最初の文「ゾンビを20体たおすと、ボスが出てくる！」の数も同じに直そう。<br>
+          わく間かくの式の <code>0.08</code> を大きくすると、早く1秒になります。<br>
+          ボスを別のゾンビの見た目にしたいときは、Boss の「⋮」→「アセットの交換」が使えます。</p>
       </details>
     </div>
 
-    <h2>5-8. 🚨 つまずきポイント集</h2>
+    <h2>5-12. 🚨 つまずきポイント集</h2>
 
     <div class="trouble">
       <h4>弾が当たってもゾンビがたおれない</h4>
@@ -343,18 +583,48 @@
       <p><strong>直し方:</strong> 置いた KillText をクリックして、左のレイヤーの欄を「UI」に変えよう。</p>
     </div>
 
-    <h2>5-9. ✅ チェックリスト</h2>
+    <div class="trouble">
+      <h4>20体たおしてもボスが出てこない</h4>
+      <p><strong>原因:</strong> Boss のイベントの条件がちがう、または BossSpawned が最初から「真」になっている。</p>
+      <p><strong>直し方:</strong> ステップ19の条件が「Kills ≥ Goal」と「BossSpawned は 偽 である」になっているか確かめよう。<br>
+        「Game Scene 変数」で、BossSpawned の値が「偽」になっているかも見てみよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>ボスがたくさん出てくる</h4>
+      <p><strong>原因:</strong> ボスを出すイベントに「BossSpawned を真に設定」のアクションがない。</p>
+      <p><strong>直し方:</strong> ステップ19のアクションのいちばん上に、「変数の値を変更」で BossSpawned を「真に設定」を入れよう。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>「シーンを変更する」の一覧に Clear が出てこない</h4>
+      <p><strong>原因:</strong> Clear のシーンをまだ作っていない、または名前がちがう。</p>
+      <p><strong>直し方:</strong> ステップ18のとおり、プロジェクトマネージャーで Clear のシーンを作ろう。<br>
+        名前は大文字の C で始まる <code>Clear</code> です。</p>
+    </div>
+
+    <div class="trouble">
+      <h4>BOSS HP の文字が、ボスが出る前から見えている</h4>
+      <p><strong>原因:</strong> 「シーンが始まった」で BossHPText を非表示にするイベントがない。</p>
+      <p><strong>直し方:</strong> ステップ19の1つ目のイベントを作ろう。</p>
+    </div>
+
+    <h2>5-13. ✅ チェックリスト</h2>
     <div class="checklist">
       <label><input type="checkbox"> Zombie に Health（3）のオブジェクト変数を作った</label>
       <label><input type="checkbox"> 弾を3発当てるとゾンビがたおれる</label>
       <label><input type="checkbox"> トラックでゾンビをたおせる</label>
-      <label><input type="checkbox"> 3秒ごとにゾンビがわいてくる</label>
+      <label><input type="checkbox"> ゾンビがわいてきて、たおすほど間かくが短くなる</label>
       <label><input type="checkbox"> Kills が画面に出る</label>
       <label><input type="checkbox"> HP が 0 になると最初からになる</label>
+      <label><input type="checkbox"> Goal・BossSpawned の変数と、GoalText・BossHPText を作った</label>
+      <label><input type="checkbox"> 20体たおすとボスが出てきて、弾やトラックで BOSS HP がへる</label>
+      <label><input type="checkbox"> ボスをたおすと Clear のシーンに切りかわる</label>
     </div>
     <p>全部チェックできたら第5章クリア！<br>
       🎉 次回は最終回！<br>
-      音や見た目を仕上げて、みんなに遊んでもらおう。</p>
+      タイトル・ゲームオーバー・クリアの画面を作って、ゲームを1本に仕上げよう。<br>
+      音や見た目も仕上げて、みんなに遊んでもらおう。</p>
 
     <nav class="chapter-nav">
       <a href="chapter4.html">← 第4章 ゾンビがやってきた</a>
